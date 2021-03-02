@@ -26,8 +26,9 @@ const UserContext = createContext<UserContextProps>({ user: null, error: null })
 /**
  * UserHandlerProps
  */
+type LoginParams = SocialLogin | [email: string, password: string]
 interface UserHandlerProps {
-  onLogin?: (social?: SocialLogin) => void
+  onLogin?: (params: LoginParams) => void
   onLogout?: () => void
 }
 const UserHandlerContext = createContext<UserHandlerProps>({})
@@ -46,7 +47,7 @@ const UserProvider = ({ children }: UserProviderInterface) => {
         switch (args.length) {
           case 2:
             const [email, password] = args
-            
+            auth.createUserWithEmailAndPassword(email, password)
             break
           case 1:
             const [social = SocialLogin.ANONYMOUS] = args

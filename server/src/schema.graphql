@@ -1,0 +1,97 @@
+type Query {
+  info: String!
+  feed(filter: String, skip: Int, take: Int, orderBy: LinkOrderByInput): Feed!
+}
+
+type Feed {
+  id: ID!
+  links: [Link!]!
+  count: Int!
+}
+
+type Mutation {
+  post(url: String!, description: String!): Link!
+  signup(email: String!, password: String!, name: String!): AuthPayload
+  login(email: String!, password: String!): AuthPayload
+  vote(linkId: ID!): Vote
+  subscribe: Observer
+  createSubject(name: String!, description: String): Subject
+}
+
+type Subscription {
+  newLink: Link
+  newVote: Vote
+  createSubject: Subject
+  registerObserver: Observer
+}
+
+type Observer {
+  id: ID!
+  name: String
+  description: String
+  subject: Subject
+  subjectId: Int
+  logs: [Log]
+}
+
+type Log {
+  id: ID!
+  type: String
+  level: String
+  title: String
+  message: String
+  createdAt: DateTime
+  subject: Subject
+  subjectId: Int
+  observer: Observer
+  observerId: Int
+}
+type Subject {
+  id: ID!
+  name: String
+  description: String
+  createdAt: DateTime
+  createdById: String
+  observers: [Observer]
+  logs: [Log]
+}
+
+type AuthPayload {
+  token: String
+  user: User
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  links: [Link!]!
+}
+
+type Link {
+  id: ID!
+  description: String!
+  url: String!
+  postedBy: User
+  votes: [Vote!]!
+  createdAt: DateTime!
+}
+
+type Vote {
+  id: ID!
+  link: Link!
+  user: User!
+}
+
+input LinkOrderByInput {
+  description: Sort
+  url: Sort
+  createdAt: Sort
+}
+
+enum Sort {
+  asc
+  desc
+}
+
+scalar DateTime

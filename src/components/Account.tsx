@@ -9,7 +9,7 @@ const Account = () => {
 
   useEffect(() => {
     if (!!onLogin && !user) {
-      onLogin()
+      onLogin(SocialLogin.ANONYMOUS)
     }
   }, [!!onLogin])
 
