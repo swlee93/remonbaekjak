@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@ant-design/dark-theme@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@ant-design/dark-theme/-/dark-theme-2.0.2.tgz#90de9b78b68fdbb577be629a45d39eca3f06d6e9"
+  integrity sha512-wDzyDA8hky26PKMZ2pcqGq1rfprObGRbZcdh8C+aYH9JA7dzeQvKJ5CctOdjQKl/YyyR7HW5nFUcZfNOayfORw==
+
 "@apollo/protobufjs@^1.0.3":
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/@apollo/protobufjs/-/protobufjs-1.0.5.tgz#a78b726147efc0795e74c8cb8a11aafc6e02f773"

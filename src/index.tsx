@@ -6,6 +6,8 @@ import { ApolloProvider, FirebaseProvider, UserProvider } from 'contexts'
 
 import App from 'components/App'
 
+import 'index.css'
+
 ReactDOM.render(
   <FirebaseProvider>
     <UserProvider>
