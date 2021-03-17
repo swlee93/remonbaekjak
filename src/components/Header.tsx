@@ -8,10 +8,10 @@ const Header = () => {
   const { user } = useContext(UserContext)
   const hasUser = !!user
   return (
-    <div>
+    <>
       Header
       <Account />
-    </div>
+    </>
   )
 }
 
