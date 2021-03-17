@@ -1,7 +1,8 @@
-import React, { useReducer } from 'react'
+import React, { useContext, useReducer } from 'react'
 import LayoutButton from './LayoutButton'
 
 import { StyledSider, StyledHeader, StyledContent, StyledLayout } from 'styles/LayoutStyles'
+import { MenuContext } from 'contexts'
 
 interface LayoutBuilderProps {
   Sider?: JSX.Element
@@ -11,30 +12,32 @@ interface LayoutBuilderProps {
 
 const LayoutBuilder = ({ Sider, Header, Content }: LayoutBuilderProps) => {
   const [collapsed, toggleSider] = useReducer((toggle) => !toggle, false)
-
+  const { currentMenu } = useContext(MenuContext)
   return (
     <StyledLayout>
       {!!Sider && (
-        <StyledSider collapsible breakpoint='lg' collapsedWidth='0' trigger={null} collapsed={collapsed}>
-          {!collapsed && (
+        <>
+          <StyledSider collapsible breakpoint='lg' collapsedWidth='0' trigger={null} collapsed={collapsed}>
             <StyledHeader>
-              <LayoutButton onClick={toggleSider} />
+              <LayoutButton onClick={toggleSider} collapsed={collapsed} />
             </StyledHeader>
-          )}
-          {Sider}
-        </StyledSider>
+            {Sider}
+          </StyledSider>
+        </>
       )}
-      {!!Header && <StyledHeader>{Header}</StyledHeader>}
-      {!!Content && (
-        <StyledContent>
-          {!!Sider && collapsed && (
-            <StyledHeader>
-              <LayoutButton onClick={toggleSider} />
-            </StyledHeader>
-          )}
-          {Content}
-        </StyledContent>
-      )}
+      <StyledContent>
+        {!!Header && (
+          <StyledHeader>
+            <LayoutButton collapsed={collapsed} onClick={toggleSider} hidden={!Sider || !collapsed}>
+              {currentMenu?.name}
+            </LayoutButton>
+
+            {Header}
+          </StyledHeader>
+        )}
+
+        {!!Content && <StyledContent>{Content}</StyledContent>}
+      </StyledContent>
     </StyledLayout>
   )
 }

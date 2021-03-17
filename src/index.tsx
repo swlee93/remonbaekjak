@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter } from 'react-router-dom'
 
-import { ApolloProvider, FirebaseProvider, UserProvider } from 'contexts'
+import { ApolloProvider, FirebaseProvider, MenuProvider, UserProvider } from 'contexts'
 
 import App from 'components/App'
 
@@ -13,7 +13,9 @@ ReactDOM.render(
     <UserProvider>
       <ApolloProvider>
         <BrowserRouter>
-          <App />
+          <MenuProvider>
+            <App />
+          </MenuProvider>
         </BrowserRouter>
       </ApolloProvider>
     </UserProvider>
