@@ -1,87 +1,107 @@
-type Query {
-  info: String!
-  feed(filter: String, skip: Int, take: Int, orderBy: LinkOrderByInput): Feed!
-}
+## NEW
 
-type Feed {
+type Task {
   id: ID!
-  links: [Link!]!
-  count: Int!
-}
-
-type Mutation {
-  post(url: String!, description: String!): Link!
-  signup(email: String!, password: String!, name: String!): AuthPayload
-  login(email: String!, password: String!): AuthPayload
-  vote(linkId: ID!): Vote
-  subscribe: Observer
-  createSubject(name: String!, description: String): Subject
-}
-
-type Subscription {
-  newLink: Link
-  newVote: Vote
-  createSubject: Subject
-  registerObserver: Observer
-}
-
-type Observer {
-  id: ID!
-  name: String
-  description: String
-  subject: Subject
-  subjectId: Int
-  logs: [Log]
-}
-
-type Log {
-  id: ID!
-  type: String
-  level: String
-  title: String
-  message: String
-  createdAt: DateTime
-  subject: Subject
-  subjectId: Int
-  observer: Observer
-  observerId: Int
-}
-type Subject {
-  id: ID!
-  name: String
-  description: String
-  createdAt: DateTime
-  createdById: String
-  observers: [Observer]
-  logs: [Log]
-}
-
-type AuthPayload {
-  token: String
-  user: User
-}
-
-type User {
-  id: ID!
+  type: TaskType
   name: String!
-  email: String!
-  links: [Link!]!
-}
-
-type Link {
-  id: ID!
   description: String!
-  url: String!
-  postedBy: User
-  votes: [Vote!]!
+  createdBy: String
   createdAt: DateTime!
 }
 
-type Vote {
-  id: ID!
-  link: Link!
-  user: User!
+type Query {
+  getTasks: [Task]
 }
+
+type Mutation {
+  createTask(name: String!, description: String, type: String, createdBy: String): Task
+}
+
+# type Query {
+#   info: String!
+#   feed(filter: String, skip: Int, take: Int, orderBy: LinkOrderByInput): Feed!
+# }
+
+# type Mutation {
+#   post(url: String!, description: String!): Link!
+#   signup(email: String!, password: String!, name: String!): AuthPayload
+#   login(email: String!, password: String!): AuthPayload
+#   vote(linkId: ID!): Vote
+#   subscribe: Observer
+#   createSubject(name: String!, description: String): Subject
+# }
+
+# type Subscription {
+#   newLink: Link
+#   newVote: Vote
+#   createSubject: Subject
+#   registerObserver: Observer
+# }
+
+# type Observer {
+#   id: ID!
+#   name: String
+#   description: String
+#   subject: Subject
+#   subjectId: Int
+#   logs: [Log]
+# }
+
+# type Feed {
+#   id: ID!
+#   links: [Link!]!
+#   count: Int!
+# }
+
+# type Link {
+#   id: ID!
+#   description: String!
+#   url: String!
+#   postedBy: User
+#   votes: [Vote!]!
+#   createdAt: DateTime!
+# }
+
+# type User {
+#   id: ID!
+#   name: String!
+#   email: String!
+#   links: [Link!]!
+# }
+
+# type Vote {
+#   id: ID!
+#   link: Link!
+#   user: User!
+# }
+
+# type Log {
+#   id: ID!
+#   type: String
+#   level: String
+#   title: String
+#   message: String
+#   createdAt: DateTime
+#   subject: Subject
+#   subjectId: Int
+#   observer: Observer
+#   observerId: Int
+# }
+# type Subject {
+#   id: ID!
+#   name: String
+#   description: String
+#   createdAt: DateTime
+#   createdById: String
+#   observers: [Observer]
+#   logs: [Log]
+# }
+
+# type AuthPayload {
+#   token: String
+#   user: User
+# }
+scalar DateTime
 
 input LinkOrderByInput {
   description: Sort
@@ -94,4 +114,6 @@ enum Sort {
   desc
 }
 
-scalar DateTime
+enum TaskType {
+  LIGHTHOUSE
+}

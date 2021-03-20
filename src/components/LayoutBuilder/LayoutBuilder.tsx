@@ -1,7 +1,7 @@
 import React, { useContext, useReducer } from 'react'
 import LayoutButton from './LayoutButton'
 
-import { StyledSider, StyledHeader, StyledContent, StyledLayout } from 'styles/LayoutStyles'
+import { StyledSider, StyledHeader, StyledContent, StyledLayout, StyledContentInner } from 'styles/LayoutStyles'
 import { MenuContext } from 'contexts'
 
 interface LayoutBuilderProps {
@@ -36,7 +36,7 @@ const LayoutBuilder = ({ Sider, Header, Content }: LayoutBuilderProps) => {
           </StyledHeader>
         )}
 
-        {!!Content && <StyledContent>{Content}</StyledContent>}
+        {!!Content && <StyledContentInner>{Content}</StyledContentInner>}
       </StyledContent>
     </StyledLayout>
   )

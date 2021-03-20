@@ -23,4 +23,16 @@ export const StyledSider = styled(Sider)`
   }
 `
 
-export const StyledContent = styled(Content)``
+export const StyledContentInner = styled(Content)`
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+`
+export const StyledContent = styled(Content)`
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+  & ${StyledContentInner} {
+    overflow: auto;
+  }
+`
