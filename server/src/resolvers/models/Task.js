@@ -12,7 +12,6 @@ async function createTask(parent, args, context, info) {
       description: args.description || '',
       type: args.type || process.env.DEFAULT_TASK_TYPE,
       createdBy: args.createdBy || userId || process.env.DEFAULT_TASK_CREATEDBY,
-      createdAt: Date.now(),
     },
   })
 

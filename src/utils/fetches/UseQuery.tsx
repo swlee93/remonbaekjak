@@ -6,20 +6,22 @@ interface UseQueryComponentProps {
   query: string
   ownProps: any
 }
-interface UseQueryProps {
+type UseQueryProps<T> = {
   loading: boolean
   error?: ApolloError
   data: any
   setOptions: (options: QueryHookOptions) => void
+  refetch: () => void
   [key: string]: any
-}
-type Children = FunctionComponent<UseQueryProps>
+} & T
+type Children = FunctionComponent<UseQueryProps<any>>
 
-const UseQueryContext = createContext<UseQueryProps>({
+const UseQueryContext = createContext<UseQueryProps<any>>({
   loading: false,
   error: undefined,
   data: undefined,
   setOptions: () => {},
+  refetch: () => {},
 })
 
 const UseQueryComponent = ({ children, query, ownProps = {} }: UseQueryComponentProps) => {
@@ -27,12 +29,11 @@ const UseQueryComponent = ({ children, query, ownProps = {} }: UseQueryComponent
     return gql(query)
   })
   const [options, setOptions] = useState<QueryHookOptions>()
-  const { loading, error, data } = useQuery(QUERY_GENERATED, options)
-  console.log('children', children, query)
+  const { loading, error, data, refetch } = useQuery(QUERY_GENERATED, options)
 
   return (
-    <UseQueryContext.Provider value={{ loading, error, data, setOptions }}>
-      {children({ loading, error, data, setOptions, ...ownProps })}
+    <UseQueryContext.Provider value={{ loading, error, data, setOptions, refetch }}>
+      <>{children({ loading, error, data, setOptions, refetch, ...ownProps })}</>
     </UseQueryContext.Provider>
   )
 }
@@ -46,7 +47,7 @@ const UseQuery = (children: Children) => (literal: TemplateStringsArray, ...vari
         {children}
       </UseQueryComponent>
     ) : (
-      children
+      <>{children({ loading: false, error: false, data: undefined, ...(props || {}) })}</>
     )
 }
 

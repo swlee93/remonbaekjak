@@ -1,12 +1,12 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Affix, Button, Input } from 'antd'
 import TaskForm from './TaskForm'
-import { UseQuery, UseQueryProps } from 'utils/fetches'
+import { UseQuery, UseQueryContext, UseQueryProps } from 'utils/fetches'
 import TaskList from './TaskList'
 import { HeaderPlace } from 'components/Header'
 import { PlusCircleOutlined } from '@ant-design/icons'
 import AddTask from './AddTask'
-const Task = ({ data, loading, error }: UseQueryProps) => {
+const Task = ({ data, loading, error }: UseQueryProps<any>) => {
   return (
     <>
       <HeaderPlace>
