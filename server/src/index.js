@@ -1,5 +1,7 @@
 require('dotenv').config()
 
+const { TaskManager } = require('./schedules/TaskManager')
+
 const { ApolloServer, PubSub } = require('apollo-server')
 const { PrismaClient } = require('@prisma/client')
 
@@ -16,7 +18,6 @@ const path = require('path')
 const { getUserId } = require('./utils')
 
 const pubsub = new PubSub()
-
 const prisma = new PrismaClient({
   errorFormat: 'minimal',
 })
@@ -57,4 +58,8 @@ const server = new ApolloServer({
   },
 })
 
-server.listen().then(({ url }) => console.log(`Server is running on ${url}`))
+const taskManager = TaskManager.createInstance(prisma)
+
+server.listen().then(({ url }) => {
+  console.log(`Server is running on ${url}`)
+})
