@@ -86,23 +86,23 @@ const { createTask } = require('./models/Task')
 //  * @param {*} info
 //  */
 // async function subscribe(parent, args, context, info) {
-//   const { subjectId } = args
+//   const { sprintId } = args
 //   const { name, description } = context
-//   const subject = await context.prisma.subject.findUnique({
+//   const sprint = await context.prisma.sprint.findUnique({
 //     where: {
-//       subjectId: {
-//         subjectId: Number(subjectId),
+//       sprintId: {
+//         sprintId: Number(sprintId),
 //       },
 //     },
 //   })
 
-//   if (Boolean(subject)) {
-//     throw new Error(`Already subscribed for subject: ${subjectId}`)
+//   if (Boolean(sprint)) {
+//     throw new Error(`Already subscribed for sprint: ${sprintId}`)
 //   }
 
 //   const observer = context.prisma.observer.create({
 //     data: {
-//       subject: { connect: { id: subjectId } },
+//       sprint: { connect: { id: sprintId } },
 //       name,
 //       description,
 //     },
@@ -112,20 +112,20 @@ const { createTask } = require('./models/Task')
 //   return observer
 // }
 
-// async function createSubject(parent, args, context, info) {
+// async function createSprint(parent, args, context, info) {
 //   const { userId } = context
 //   const { name, description } = args
-//   console.log('createSubject', name, description, userId)
-//   const subject = await context.prisma.subject.create({
+//   console.log('createSprint', name, description, userId)
+//   const sprint = await context.prisma.sprint.create({
 //     data: {
 //       name,
 //       description,
 //       createdById: userId || 'GUEST',
 //     },
 //   })
-//   context.pubsub.publish('CREATE_SUBJECT', subject)
+//   context.pubsub.publish('CREATE_SUBJECT', sprint)
 
-//   return subject
+//   return sprint
 // }
 
 module.exports = {
@@ -135,5 +135,5 @@ module.exports = {
   // login,
   // vote,
   // subscribe,
-  // createSubject,
+  // createSprint,
 }

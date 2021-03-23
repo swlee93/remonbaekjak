@@ -5,7 +5,7 @@
 //       }
 //     : {}
 
-//   const subjects = await context.prisma.subjects.findMany({
+//   const sprints = await context.prisma.sprints.findMany({
 //     where,
 //     skip: args.skip,
 //     take: args.take,
@@ -16,7 +16,7 @@
 
 //   return {
 //     id: 'main-feed',
-//     subjects,
+//     sprints,
 //     count,
 //   }
 // }

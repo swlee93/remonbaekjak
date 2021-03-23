@@ -1,4 +1,15 @@
-## NEW
+type Query {
+  getTasks: [Task]
+}
+
+type Mutation {
+  createTask(name: String!, description: String, type: TaskType): Task
+}
+
+type Subscription {
+  createSprint: Sprint
+  registObserver: Observer
+}
 
 type Task {
   id: ID!
@@ -9,98 +20,36 @@ type Task {
   createdAt: DateTime!
 }
 
-type Query {
-  getTasks: [Task]
+type Sprint {
+  id: ID!
+  name: String
+  taskId: Int
+  observers: [Observer]
+  logs: [Log]
 }
 
-type Mutation {
-  createTask(name: String!, description: String, type: TaskType): Task
+type Observer {
+  id: ID!
+  name: String
+  description: String
+  sprint: Sprint
+  sprintId: Int
+  logs: [Log]
 }
 
-# type Query {
-#   info: String!
-#   feed(filter: String, skip: Int, take: Int, orderBy: LinkOrderByInput): Feed!
-# }
+type Log {
+  id: ID!
+  type: String
+  level: String
+  title: String
+  message: String
+  createdAt: DateTime
+  sprint: Sprint
+  sprintId: Int
+  observer: Observer
+  observerId: Int
+}
 
-# type Mutation {
-#   post(url: String!, description: String!): Link!
-#   signup(email: String!, password: String!, name: String!): AuthPayload
-#   login(email: String!, password: String!): AuthPayload
-#   vote(linkId: ID!): Vote
-#   subscribe: Observer
-#   createSubject(name: String!, description: String): Subject
-# }
-
-# type Subscription {
-#   newLink: Link
-#   newVote: Vote
-#   createSubject: Subject
-#   registerObserver: Observer
-# }
-
-# type Observer {
-#   id: ID!
-#   name: String
-#   description: String
-#   subject: Subject
-#   subjectId: Int
-#   logs: [Log]
-# }
-
-# type Feed {
-#   id: ID!
-#   links: [Link!]!
-#   count: Int!
-# }
-
-# type Link {
-#   id: ID!
-#   description: String!
-#   url: String!
-#   postedBy: User
-#   votes: [Vote!]!
-#   createdAt: DateTime!
-# }
-
-# type User {
-#   id: ID!
-#   name: String!
-#   email: String!
-#   links: [Link!]!
-# }
-
-# type Vote {
-#   id: ID!
-#   link: Link!
-#   user: User!
-# }
-
-# type Log {
-#   id: ID!
-#   type: String
-#   level: String
-#   title: String
-#   message: String
-#   createdAt: DateTime
-#   subject: Subject
-#   subjectId: Int
-#   observer: Observer
-#   observerId: Int
-# }
-# type Subject {
-#   id: ID!
-#   name: String
-#   description: String
-#   createdAt: DateTime
-#   createdById: String
-#   observers: [Observer]
-#   logs: [Log]
-# }
-
-# type AuthPayload {
-#   token: String
-#   user: User
-# }
 scalar DateTime
 
 input LinkOrderByInput {
