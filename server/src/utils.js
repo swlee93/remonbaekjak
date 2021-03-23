@@ -27,8 +27,8 @@ function getUserId(req, authToken) {
 function timeout(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
-async function sleep(fn, ...args) {
-  await timeout(5000)
+async function sleep(fn, interval = 5000, ...args) {
+  await timeout(interval)
   return fn(...args)
 }
 

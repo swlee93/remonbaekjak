@@ -17,8 +17,6 @@ const registObserver = {
 }
 
 module.exports = {
-  // newLink,
-  // newVote,
   createSprint,
   registObserver,
 }

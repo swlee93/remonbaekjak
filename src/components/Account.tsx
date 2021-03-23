@@ -24,6 +24,7 @@ const Account = () => {
       onLogout()
     }
   }
+  return <></>
   return (
     <>
       {isAnonymous ? <Button onClick={onClickLogin}>GITHUB</Button> : <Button onClick={onClickLogout}>Logout</Button>}

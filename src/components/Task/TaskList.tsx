@@ -1,11 +1,30 @@
-import { Table } from 'antd'
+import { Button, Drawer, Space, Table } from 'antd'
 import { SortableContainer as SC, SortableElement as SE, SortableHandle as SH } from 'react-sortable-hoc'
-import { MenuOutlined } from '@ant-design/icons'
+import { ExceptionOutlined, FileExclamationTwoTone, MenuOutlined } from '@ant-design/icons'
 import arrayMove from 'array-move'
 import { useEffect, useState } from 'react'
+import LightHouse from './LightHouse'
 
 const DragHandle = SH(() => <MenuOutlined style={{ cursor: 'grab', color: '#999' }} />)
 
+const Action = (props: { text: string; record: any }) => {
+  const { text, record } = props
+  const [visible, setVisible] = useState(false)
+  return (
+    <Space size='middle'>
+      <Button type='link' icon={<ExceptionOutlined />} onClick={() => setVisible(true)} />
+      <Drawer
+        bodyStyle={{ display: 'flex', flexFlow: 'column', padding: 0 }}
+        width='300px'
+        title={'Reports'}
+        visible={visible}
+        onClose={() => setVisible(false)}
+      >
+        <LightHouse {...record} />
+      </Drawer>
+    </Space>
+  )
+}
 const columns = [
   // id,
   // description,
@@ -37,12 +56,17 @@ const columns = [
     title: 'Created At',
     dataIndex: 'createdAt',
   },
+  {
+    title: 'Action',
+    key: 'action',
+    render: (text: string, record: any) => <Action text={text} record={record} />,
+  },
 ]
 
 const SortableElement = SE((props: any) => <tr {...props} />)
 const SortableContainer = SC((props: any) => <tbody {...props} />)
 
-const SortableTable = ({ data, loading, error }: any) => {
+const TaskList = ({ data, loading, error }: any) => {
   const [dataSource, setDataSource] = useState(data || [])
   console.log('dataSource', dataSource)
   useEffect(() => {
@@ -85,4 +109,4 @@ const SortableTable = ({ data, loading, error }: any) => {
   )
 }
 
-export default SortableTable
+export default TaskList
