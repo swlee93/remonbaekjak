@@ -59,6 +59,8 @@ module.exports = {
        */
       Object.freeze(instance)
     }
+    // run
+    instance.run()
     return instance
   },
   getInstance: (props) => {

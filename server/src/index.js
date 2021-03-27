@@ -6,6 +6,7 @@ const { ApolloServer, PubSub } = require('apollo-server')
 const { PrismaClient } = require('@prisma/client')
 
 const TaskManager = require('./schedules/TaskManager')
+const ClearingFileDB = require('./schedules/ClearingFileDB')
 const LightHouse = require('./collectors/LightHouse')
 
 const Query = require('./resolvers/Query')
@@ -19,9 +20,13 @@ const pubsub = new PubSub()
 const prisma = new PrismaClient({
   errorFormat: 'minimal',
 })
+
+/**
+ * schedules
+ */
 const taskManager = TaskManager.createInstance({ prisma, collector: { LIGHTHOUSE: LightHouse } })
 
-taskManager.run()
+const clearing = ClearingFileDB.createInstance()
 
 /**
  * resolvers

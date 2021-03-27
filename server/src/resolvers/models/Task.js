@@ -24,7 +24,6 @@ async function getLightHouseData(parent, args, context, info) {
   const reportpath = 'filedb/lighthouse/report/' + args.taskId
   const performancepath = 'filedb/lighthouse/performance/' + args.taskId
   let files = []
-
   if (fse.pathExistsSync(reportpath)) {
     files = fse.readdirSync(reportpath)
   }
