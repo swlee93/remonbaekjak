@@ -17,20 +17,38 @@ class LightHouse {
       const runnerResult = await lighthouse(this.task.name || 'https://example.com', options)
 
       // `.report` is the HTML report as a string
-      const reportHtml = runnerResult.report
-      const datenow = Date.now()
-      const reportName = 'filedb/lighthouse/report/' + this.task.id + '/' + datenow + '.json'
-      const performanceName = 'filedb/lighthouse/performance/' + this.task.id + '/' + datenow + '.json'
-      Promise.all([
-        fse.outputFile(reportName, reportHtml),
-        fse.outputJSON(performanceName, runnerResult.lhr.categories.performance),
-      ]).catch((err) => {
-        console.error(err)
-      })
+      const reportJson = runnerResult.report
+      const now = Date.now()
+      const startOfDate = new Date().setHours(0, 0, 0, 0)
 
-      // `.lhr` is the Lighthouse Result as a JS object
-      console.log('Report is done for', runnerResult.lhr.finalUrl)
-      console.log('Performance score was', runnerResult.lhr.categories.performance.score * 100)
+      const reportName = 'filedb/lighthouse/report/' + this.task.id + '/' + now + '.json'
+      const performanceName = 'filedb/lighthouse/performance/' + this.task.id + '/' + startOfDate + '.csv'
+
+      Promise.all([fse.outputFileSync(reportName, reportJson), fse.readJsonSync(reportName)])
+        .then(([_, report]) => {
+          const isExist = fse.pathExistsSync(performanceName)
+          const metrics = report.audits.metrics.details || {}
+          const metricsItems = metrics.items || []
+          const csv = metricsItems.reduce(
+            (acc, items) => {
+              Object.entries(items).forEach(([key, value]) => {
+                acc.header.push(key)
+                acc.values.push(value)
+              })
+              return acc
+            },
+            { header: ['time'], values: [now] },
+          )
+
+          if (isExist) {
+            fse.appendFile(performanceName, '\n' + csv.values.join(','))
+          } else {
+            fse.outputFile(performanceName, [csv.header.join(','), csv.values.join(',')].join('\n'))
+          }
+        })
+        .catch((err) => {
+          console.error(err)
+        })
 
       await chrome.kill()
     })()

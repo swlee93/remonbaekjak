@@ -3,6 +3,11 @@ const cron = require('node-cron')
 class TaskManager {
   tasks = { data: [], timestamp: Date.now() }
   schedule
+  state = {
+    waits: [],
+    doing: { task: undefined, startedAt: 0 },
+    done: { task: undefined, endedAt: 0 },
+  }
   db
   collector = {}
 
@@ -11,6 +16,7 @@ class TaskManager {
 
     this.db = prisma.task
     this.collector = collector
+
     this.schedule = cron.schedule('*/5 * * * * *', async () => {
       await this.db
         .findMany()
@@ -26,22 +32,44 @@ class TaskManager {
   getTasks = () => this.tasks
 
   setTasks = (data = [], timestamp = Date.now()) => {
-    console.log('[TaskManager] setTasks', new Date(timestamp))
     this.tasks.data = data
     this.tasks.timestamp = timestamp
   }
 
+  setState = (newTask) => {
+    const done = this.state.doing.task
+    const now = Date.now()
+    this.state.done = { task: done, endedAt: now }
+    this.state.doing = { task: newTask, startedAt: now }
+    this.state.waits = this.tasks.data.filter((tsk) => tsk.id !== newTask.id)
+    console.log('[TaskManager] getTasks', this.getState())
+  }
+
+  getState = () => this.state
+
+  getStateOf = (taskId) => {
+    if (this.state.doing.task.id === taskId) {
+      return 'doing'
+    } else if (this.state.done.task.id === taskId) {
+      return 'done'
+    } else {
+      return 'wait'
+    }
+  }
+
   run = async () => {
-    await (async function doCollect(tasks, collector) {
-      await tasks.reduce(async (turn, task) => {
+    await (async function doCollect(self) {
+      const { tasks, collector, setState } = self
+      await tasks.data.reduce(async (turn, task) => {
         await turn
         const { type } = task
         const Collector = collector[type]
 
         const runner = new Collector({ task })
+        setState(task)
         return runner.do()
       }, Promise.resolve())
-    })(this.tasks.data, this.collector)
+    })(this)
 
     await setTimeout(async () => {
       await this.run()
