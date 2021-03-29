@@ -1,4 +1,5 @@
 const fse = require('fs-extra')
+const csv = require('csvtojson')
 
 const readLightHouseReportData = async (taskId, stime = Date.now() - 86400000, etime = Date.now()) => {
   const reportpath = 'filedb/lighthouse/report/' + taskId
@@ -21,28 +22,33 @@ const readLightHouseReportData = async (taskId, stime = Date.now() - 86400000, e
   }, [])
 }
 
-const readLightHouseMetricsData = (taskId, stime = Date.now() - 86400000, etime = Date.now()) => {
+const readLightHouseMetricsData = async (taskId, stime = Date.now() - 86400000, etime = Date.now(), includeColumns) => {
   const performancepath = 'filedb/lighthouse/performance/' + taskId
   let files = []
   if (fse.pathExistsSync(performancepath)) {
     files = fse.readdirSync(performancepath)
   }
-
-  return files.reduce((acc, filename) => {
+  let results = []
+  await files.reduce(async (acc, filename) => {
+    await acc
     const timestamp = filename.split('.')[0]
     const performancefile = performancepath + '/' + timestamp + '.csv'
 
     if (stime < timestamp && etime > timestamp) {
-      const data = fse.readFileSync(performancefile).toString()
-      acc.push({ data, timestamp: Number(timestamp) })
+      return csv({ includeColumns: includeColumns ? new RegExp(`time|${includeColumns}`) : undefined })
+        .fromFile(performancefile)
+        .then(async (result) => {
+          results = [...results, ...result]
+        })
     }
-
     return acc
-  }, [])
+  }, Promise.resolve())
+
+  return results
 }
 
 const getLightHouseData = (parent, args, context, info) => {
-  const { taskId, subtype, stime, etime } = args
+  const { taskId, subtype, stime, etime, includeColumns } = args
 
   switch (subtype) {
     case 'report':
@@ -51,14 +57,14 @@ const getLightHouseData = (parent, args, context, info) => {
       }))
 
     case 'performance':
-      return Promise.resolve(readLightHouseMetricsData(taskId, stime, etime)).then((performance) => ({
+      return Promise.resolve(readLightHouseMetricsData(taskId, stime, etime, includeColumns)).then((performance) => ({
         performance,
       }))
 
     default:
       return Promise.all([
         () => readLightHouseReportData(taskId, stime, etime),
-        () => readLightHouseMetricsData(taskId, stime, etime),
+        () => readLightHouseMetricsData(taskId, stime, etime, includeColumns),
       ]).then(([report, performance]) => ({
         report,
         performance,

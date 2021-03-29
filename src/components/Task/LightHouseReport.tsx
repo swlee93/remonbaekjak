@@ -20,7 +20,7 @@ import ReportViewer from 'react-lighthouse-viewer'
 //   return <div dangerouslySetInnerHTML={{ __html: getLightHouseData?.report }} />
 // }
 
-function LightHouseReport({ id: taskId, setOptions, data, error }: UseQueryProps<any>) {
+function LightHouseReport({ data }: UseQueryProps<any>) {
   const array = data?.getLightHouseData?.report || []
 
   const [report, setReport] = useState<string>('')

@@ -1,6 +1,6 @@
 type Query {
   getTasks: [Task]
-  getLightHouseData(taskId: ID!, subtype: String, stime: Float, etime: Float): LightHouseData
+  getLightHouseData(taskId: ID!, subtype: String, stime: Float, etime: Float, includeColumns:String): LightHouseData
 }
 
 type Mutation {
@@ -12,13 +12,9 @@ type LightHouseReportData {
   data: String
 }
 
-type LightHouseMetricsData {
-  timestamp: Float
-  data: String
-}
 type LightHouseData {
   report: [LightHouseReportData]
-  performance: [LightHouseMetricsData]
+  performance: [JSON]
 }
 type Subscription {
   createSprint: Sprint
@@ -64,8 +60,6 @@ type Log {
   observerId: Int
 }
 
-scalar DateTime
-
 input LinkOrderByInput {
   description: Sort
   url: Sort
@@ -80,3 +74,7 @@ enum Sort {
 enum TaskType {
   LIGHTHOUSE
 }
+
+scalar DateTime
+scalar JSON
+scalar JSONObject

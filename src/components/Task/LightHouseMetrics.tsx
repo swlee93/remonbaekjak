@@ -1,21 +1,16 @@
 import { useEffect, useState } from 'react'
 import { UseQuery, UseQueryProps } from 'utils/fetches'
 
-function LightHouseMetrics({ id: taskId, setOptions, data, error }: UseQueryProps<any>) {
-  useEffect(() => {
-    setOptions({ variables: { taskId } })
-  }, [taskId])
-  const array = data?.getLightHouseData || []
-  const [performance, setPerformance] = useState<string>('')
-
+function LightHouseMetrics({ data }: UseQueryProps<any>) {
+  const performanceData = data?.getLightHouseData?.performance || []
+  console.log('performanceData', performanceData)
   return <></>
 }
 
 export default UseQuery(LightHouseMetrics)`
-  query GetLightHouseData($taskId: ID!) {
-    getLightHouseData(taskId: $taskId) {
-      performance
-      timestamp
+  query GetLightHouseData($id: ID!, $stime: Float, $etime: Float, $includeColumns: String) {
+    getLightHouseData(taskId: $id, subtype: "performance", stime: $stime, etime: $etime, includeColumns: $includeColumns) {
+      performance 
     }
   }
 `

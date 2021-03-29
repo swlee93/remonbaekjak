@@ -4,6 +4,9 @@ const fs = require('fs')
 const path = require('path')
 const { ApolloServer, PubSub } = require('apollo-server')
 const { PrismaClient } = require('@prisma/client')
+const { makeExecutableSchema } = require('graphql-tools')
+
+const { GraphQLJSON, GraphQLJSONObject } = require('graphql-type-json')
 
 const TaskManager = require('./schedules/TaskManager')
 const ClearingFileDB = require('./schedules/ClearingFileDB')
@@ -35,6 +38,8 @@ const resolvers = {
   Query,
   Mutation,
   Subscription,
+  JSON: GraphQLJSON,
+  JSONObject: GraphQLJSONObject,
 }
 
 /**
