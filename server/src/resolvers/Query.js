@@ -20,6 +20,7 @@
 //     count,
 //   }
 // }
-const { getTasks, getLightHouseData } = require('./models/Task')
+const { getTasks } = require('./models/Task')
+const { getLightHouseData } = require('./models/LightHouseData')
 
 module.exports = { getTasks, getLightHouseData }

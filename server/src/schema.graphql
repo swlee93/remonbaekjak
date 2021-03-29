@@ -1,15 +1,24 @@
 type Query {
   getTasks: [Task]
-  getLightHouseData(taskId: ID!): [LightHouseData]
+  getLightHouseData(taskId: ID!, subtype: String, stime: Float, etime: Float): LightHouseData
 }
 
 type Mutation {
   createTask(name: String!, description: String, type: TaskType): Task
 }
+
+type LightHouseReportData {
+  timestamp: Float
+  data: String
+}
+
+type LightHouseMetricsData {
+  timestamp: Float
+  data: String
+}
 type LightHouseData {
-  timestamp: DateTime
-  report: String
-  performance: String
+  report: [LightHouseReportData]
+  performance: [LightHouseMetricsData]
 }
 type Subscription {
   createSprint: Sprint

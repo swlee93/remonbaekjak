@@ -24,11 +24,26 @@ const UseQueryContext = createContext<UseQueryProps<any>>({
   refetch: () => {},
 })
 
+const getVariablesFromMatchProps = (query: string = '', props: any = {}) => {
+  const regex = /(?<!\\)\$([^\W$]+)/g
+  let variables: any = {}
+  let test
+  while ((test = regex.exec(query))) {
+    const matchKey = test[1]
+    if (matchKey && props.hasOwnProperty(matchKey)) {
+      variables[matchKey] = props[matchKey]
+    }
+  }
+
+  return { variables }
+}
+
 const UseQueryComponent = ({ children, query, ownProps = {} }: UseQueryComponentProps) => {
   const [QUERY_GENERATED] = useState(() => {
     return gql(query)
   })
-  const [options, setOptions] = useState<QueryHookOptions>()
+
+  const [options, setOptions] = useState<QueryHookOptions>(() => getVariablesFromMatchProps(query, ownProps))
   const { loading, error, data, refetch } = useQuery(QUERY_GENERATED, options)
 
   return (

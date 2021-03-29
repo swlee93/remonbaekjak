@@ -1,30 +1,12 @@
-import { Button, Drawer, Space, Table } from 'antd'
+import { Table } from 'antd'
 import { SortableContainer as SC, SortableElement as SE, SortableHandle as SH } from 'react-sortable-hoc'
-import { ExceptionOutlined, FileExclamationTwoTone, MenuOutlined } from '@ant-design/icons'
+import { MenuOutlined } from '@ant-design/icons'
 import arrayMove from 'array-move'
 import { useEffect, useState } from 'react'
-import LightHouse from './LightHouse'
+import TaskListAction from './TaskListAction'
 
 const DragHandle = SH(() => <MenuOutlined style={{ cursor: 'grab', color: '#999' }} />)
 
-const Action = (props: { text: string; record: any }) => {
-  const { text, record } = props
-  const [visible, setVisible] = useState(false)
-  return (
-    <Space size='middle'>
-      <Button type='link' icon={<ExceptionOutlined />} onClick={() => setVisible(true)} />
-      <Drawer
-        bodyStyle={{ display: 'flex', flexFlow: 'column', padding: 0 }}
-        width='300px'
-        title={'Reports'}
-        visible={visible}
-        onClose={() => setVisible(false)}
-      >
-        <LightHouse {...record} />
-      </Drawer>
-    </Space>
-  )
-}
 const columns = [
   // id,
   // description,
@@ -59,7 +41,7 @@ const columns = [
   {
     title: 'Action',
     key: 'action',
-    render: (text: string, record: any) => <Action text={text} record={record} />,
+    render: (text: string, record: any) => <TaskListAction text={text} record={record} />,
   },
 ]
 
@@ -68,7 +50,7 @@ const SortableContainer = SC((props: any) => <tbody {...props} />)
 
 const TaskList = ({ data, loading, error }: any) => {
   const [dataSource, setDataSource] = useState(data || [])
-  console.log('dataSource', dataSource)
+
   useEffect(() => {
     if (data) {
       setDataSource(data)
@@ -77,7 +59,7 @@ const TaskList = ({ data, loading, error }: any) => {
   const onSortEnd = ({ oldIndex, newIndex }: any) => {
     if (oldIndex !== newIndex) {
       const newData = arrayMove([].concat(dataSource), oldIndex, newIndex).filter((el) => !!el)
-      console.log('Sorted items: ', newData)
+
       setDataSource(newData)
     }
   }
@@ -87,7 +69,6 @@ const TaskList = ({ data, loading, error }: any) => {
   )
 
   const DraggableBodyRow = ({ className, style, ...restProps }: any) => {
-    // function findIndex base on Table rowKey props and should always be a right array index
     const index = dataSource.findIndex((x: any) => x.id === restProps['data-row-key'])
     return <SortableElement index={index} {...restProps} />
   }

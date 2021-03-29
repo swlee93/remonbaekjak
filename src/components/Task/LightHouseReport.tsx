@@ -20,21 +20,17 @@ import ReportViewer from 'react-lighthouse-viewer'
 //   return <div dangerouslySetInnerHTML={{ __html: getLightHouseData?.report }} />
 // }
 
-function LightHouse({ id: taskId, setOptions, data, error }: UseQueryProps<any>) {
-  useEffect(() => {
-    setOptions({ variables: { taskId } })
-  }, [taskId])
-  const array = data?.getLightHouseData || []
+function LightHouseReport({ id: taskId, setOptions, data, error }: UseQueryProps<any>) {
+  const array = data?.getLightHouseData?.report || []
 
   const [report, setReport] = useState<string>('')
-  const [performance, setPerformance] = useState<string>('')
 
   return (
     <>
-      {array.map(({ timestamp, report, performance }: any, i: number) => {
+      {array.map(({ timestamp, data }: any, i: number) => {
         const time = new Date(timestamp).toUTCString()
         return (
-          <Button type='text' key={i} onClick={() => setReport(JSON.parse(report))}>
+          <Button type='text' key={i} onClick={() => setReport(JSON.parse(data))}>
             {time}
           </Button>
         )
@@ -52,12 +48,13 @@ function LightHouse({ id: taskId, setOptions, data, error }: UseQueryProps<any>)
   )
 }
 
-export default UseQuery(LightHouse)`
-  query GetLightHouseData($taskId: ID!) {
-    getLightHouseData(taskId: $taskId) {
-      report
-      performance
-      timestamp
+export default UseQuery(LightHouseReport)`
+  query GetLightHouseData($id: ID!, $stime: Float, $etime: Float) {
+    getLightHouseData(taskId: $id, subtype: "report", stime: $stime, etime: $etime) {
+      report {
+        data
+        timestamp
+      }
     }
   }
 `
