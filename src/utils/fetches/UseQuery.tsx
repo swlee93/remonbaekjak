@@ -1,6 +1,6 @@
 import React, { createContext, FunctionComponent, useMemo, useState } from 'react'
 import { ApolloError, gql, QueryHookOptions, useQuery } from '@apollo/client'
-
+type Children = FunctionComponent<UseQueryProps<any>>
 interface UseQueryComponentProps {
   children: Children
   query: string
@@ -14,7 +14,6 @@ type UseQueryProps<T> = {
   refetch: () => void
   [key: string]: any
 } & T
-type Children = FunctionComponent<UseQueryProps<any>>
 
 const UseQueryContext = createContext<UseQueryProps<any>>({
   loading: false,

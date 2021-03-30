@@ -6,6 +6,7 @@ import { ExceptionOutlined, LineChartOutlined } from '@ant-design/icons'
 
 import LightHouseReport from './LightHouseReport'
 import LightHouseMetrics from './LightHouseMetrics'
+import TableOfContents from 'components/TableOfContents'
 
 const TaskListAction = (props: { text: string; record: any }) => {
   const { text, record } = props
@@ -28,11 +29,12 @@ const TaskListAction = (props: { text: string; record: any }) => {
       </Drawer>
       <Drawer
         bodyStyle={{ display: 'flex', flexFlow: 'column', padding: 0 }}
-        width='300px'
-        title={'Reports'}
+        width='70vw'
+        title={'Metrics'}
         visible={isMetricsVisible}
         onClose={() => setMetricsVisible(false)}
       >
+        <TableOfContents />
         <LightHouseMetrics {...record} />
       </Drawer>
     </Space>
