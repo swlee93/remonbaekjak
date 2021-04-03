@@ -1,5 +1,6 @@
-import { Line } from 'components/Chart'
+import { Line, History } from 'components/Chart'
 import TableOfContents, { TableOfContentsItem } from 'components/TableOfContents'
+import { THIRD_PARTY } from 'contexts/ApolloProvider'
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { UseQuery, UseQueryProps } from 'utils/fetches'
 
@@ -17,6 +18,7 @@ function LightHouseMetrics({ data, containerId }: UseQueryProps<any>) {
 
   return (
     <>
+      <History client={THIRD_PARTY.GITHUB} />
       {performanceDatakeys.map((yField, index) => {
         return (
           <>
