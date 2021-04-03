@@ -20,4 +20,5 @@ model Task {
 model Settings {
   userId                              String    @id @default("SYSTEM")
   github_personal_access_token        String    @default("")
+  github_repositories                  String    @default("")
 }

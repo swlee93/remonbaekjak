@@ -14,7 +14,7 @@ const SettingsItem = ({ title, children, extra }: SettingsItemProps) => {
   return (
     <>
       <StyledContent>
-        <Descriptions title={title} layout='vertical' extra={extra}>
+        <Descriptions column={3} title={title} layout='vertical' extra={extra} colon={false}>
           <>{children}</>
         </Descriptions>
       </StyledContent>
@@ -24,13 +24,16 @@ const SettingsItem = ({ title, children, extra }: SettingsItemProps) => {
 interface TitleWithIndexProps {
   label: string
   depth?: number
+  actions?: ReactNode
 }
 
-const TitleWithIndex = ({ label, depth }: TitleWithIndexProps) => {
+const TitleWithIndex = ({ label, depth, actions = [] }: TitleWithIndexProps) => {
   return (
-    <>
-      {label} <TableOfContentsItem title={label} linkId={label} depth={depth} />
-    </>
+    <div style={{ display: 'flex', gap: '8px', flexFlow: 'column' }}>
+      {label}
+      {!!actions && <div style={{ display: 'flex', gap: '8px', flexFlow: 'column' }}>{actions}</div>}
+      <TableOfContentsItem title={label} linkId={label} depth={depth} />
+    </div>
   )
 }
 

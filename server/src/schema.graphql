@@ -36,9 +36,11 @@ type Task {
 type Settings {
   userId: String
   github_personal_access_token: String
+  github_repositories: [String]
 }
 input SettingsInput {
   github_personal_access_token: String
+  github_repositories: [String]
 }
 type Sprint {
   id: ID!

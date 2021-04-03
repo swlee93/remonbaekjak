@@ -1,6 +1,7 @@
 import React, { createContext, FunctionComponent, useEffect, useMemo, useState } from 'react'
 import { ApolloError, gql, OperationVariables, useMutation } from '@apollo/client'
 import { message } from 'antd'
+import { ClientStorage } from 'contexts/ApolloProvider'
 
 interface UseMutationComponentProps {
   children: Children
@@ -29,16 +30,21 @@ const UseMutationContext = createContext<UseMutationProps<any>>({
 })
 
 const UseMutationComponent = ({ children, query, ownProps = {} }: UseMutationComponentProps) => {
+  const [storage] = useState(new ClientStorage())
   const [QUERY_GENERATED] = useState(() => {
     return gql(query)
   })
   const [options, setOptions] = useState<OperationVariables>()
   const [onMutation, { loading, error, data, called }] = useMutation(QUERY_GENERATED, options)
-  const onSubmit = (variables: any) => {
+  const onSubmit = async (variables: any) => {
     if (onMutation) {
       try {
-        console.log('variables', variables)
-        onMutation({ variables })
+        await onMutation({ variables }).then(async (result) => {
+          if (ownProps.onSuccess) {
+            await ownProps.onSuccess(result, { storage })
+          }
+          return result
+        })
       } catch (err) {
         console.error(err)
       }
@@ -74,11 +80,15 @@ const UseMutationComponent = ({ children, query, ownProps = {} }: UseMutationCom
     </UseMutationContext.Provider>
   )
 }
+interface UseMutationOptionProps {
+  onSuccess?: (result: any, { storage }: any) => void
+  [key: string]: any
+}
 
 const UseMutation = (children: Children) => (literal: TemplateStringsArray, ...variables: string[]) => {
   const query = literal.raw.reduce((acc, curr, idx) => acc + curr + (variables[idx] || ''), '')
 
-  return (props: any) =>
+  return (props: UseMutationOptionProps) =>
     query ? (
       <UseMutationComponent query={query} ownProps={props}>
         {children}

@@ -28,12 +28,39 @@ const wsLink = new WebSocketLink({
   },
 })
 
+export class ClientStorage {
+  storageKey = 'client'
+  storage: any
+  constructor() {
+    try {
+      const __storage = localStorage.getItem(this.storageKey) || ''
+      this.storage = JSON.parse(__storage) || {}
+    } catch (err) {
+      this.storage = {}
+    }
+  }
+  get = (key: 'token') => {
+    if (key) {
+      return this.storage[key]
+    } else {
+      return this.storage
+    }
+  }
+  set = (key: 'token', value: string) => {
+    localStorage.setItem(this.storageKey, JSON.stringify({ ...this.storage, [key]: value }))
+    this.storage[key] = value
+  }
+}
+
 const authMiddleware = new ApolloLink((operation, forward) => {
   // add the authorization to the headers
-  const temp = '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'
-  const authorization = `Bearer ${localStorage.getItem('token') || temp || null}`
+
+  const clientStorage = new ClientStorage()
+  console.log('clientStorage', clientStorage.get('token'))
+  const authorization = `Bearer ${clientStorage.get('token') || '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'}`
 
   operation.setContext({
+    clientStorage,
     headers: {
       authorization,
     },
