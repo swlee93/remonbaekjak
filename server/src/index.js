@@ -54,6 +54,7 @@ const server = new ApolloServer({
       prisma,
       pubsub,
       taskManager,
+      user: { id: 'SYSTEM' },
     }
   },
 

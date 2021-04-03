@@ -75,6 +75,7 @@ const TaskList = ({ data, loading, error }: any) => {
 
   return (
     <Table
+      style={{ width: '100%' }}
       loading={loading}
       pagination={false}
       dataSource={dataSource}

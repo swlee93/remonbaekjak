@@ -12,6 +12,7 @@ type UseQueryProps<T> = {
   data: any
   setOptions: (options: QueryHookOptions) => void
   refetch: () => void
+  called: boolean
   [key: string]: any
 } & T
 
@@ -21,6 +22,7 @@ const UseQueryContext = createContext<UseQueryProps<any>>({
   data: undefined,
   setOptions: () => {},
   refetch: () => {},
+  called: false,
 })
 
 const getVariablesFromMatchProps = (query: string = '', props: any = {}) => {
@@ -44,11 +46,11 @@ const UseQueryComponent = ({ children, query, ownProps = {} }: UseQueryComponent
   })
 
   const [options, setOptions] = useState<QueryHookOptions>(() => getVariablesFromMatchProps(query, ownProps))
-  const { loading, error, data, refetch } = useQuery(QUERY_GENERATED, options)
+  const { loading, error, data, refetch, called } = useQuery(QUERY_GENERATED, options)
 
   return (
-    <UseQueryContext.Provider value={{ loading, error, data, setOptions, refetch }}>
-      <>{children({ loading, error, data, setOptions, refetch, ...ownProps })}</>
+    <UseQueryContext.Provider value={{ loading, error, data, setOptions, refetch, called }}>
+      <>{children({ loading, error, data, setOptions, refetch, called, ...ownProps })}</>
     </UseQueryContext.Provider>
   )
 }
@@ -62,7 +64,7 @@ const UseQuery = (children: Children) => (literal: TemplateStringsArray, ...vari
         {children}
       </UseQueryComponent>
     ) : (
-      <>{children({ loading: false, error: false, data: undefined, ...(props || {}) })}</>
+      <>{children({ loading: false, error: false, data: undefined, called: false, ...(props || {}) })}</>
     )
 }
 

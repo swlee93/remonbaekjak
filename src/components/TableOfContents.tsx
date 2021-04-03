@@ -1,23 +1,22 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Anchor, Layout } from 'antd'
 import { createPortal } from 'react-dom'
 import styled from 'styled-components'
 
 const ANCHOR_ID = 'ANCHOR_ID'
-const TableOfContentsItemWrap = styled.div<{ hasLinkId: boolean }>`
+const TableOfContentsItemWrap = styled.div<{ hasLinkId: boolean; depth?: number }>`
   ${(props) => props.hasLinkId && `cursor: pointer;`}
+  ${(props) => props.depth && `padding-left: ${props.depth * 20}px;`}
   opacity: 0.3;
 `
-const TableOfContentsWrap = styled.div`
-  position: fixed;
-  left: 0;
-  top: 0;
-  height: 100vh;
+const TableOfContentsWrap = styled.div<{ fixed: boolean }>`
+  ${({ fixed }) => (fixed ? ` position: fixed; left: 0;top: 0;height: 100vh; z-index: -1;` : ``)}
+
   display: grid;
   gap: 8px;
   overflow: auto;
   padding: 16px 24px;
-  z-index: -1;
+
   &:hover {
     z-index: 1;
     & ${TableOfContentsItemWrap}:not(:hover) {
@@ -29,19 +28,25 @@ const TableOfContentsWrap = styled.div`
     font-weight: bold;
   }
 `
-
-const TableOfContents = () => {
-  return <TableOfContentsWrap id={ANCHOR_ID}></TableOfContentsWrap>
+interface TableOfContentsProps {
+  fixed?: boolean
+}
+const TableOfContents = ({ fixed = true }: TableOfContentsProps) => {
+  return <TableOfContentsWrap fixed={fixed} id={ANCHOR_ID}></TableOfContentsWrap>
 }
 
 interface TableOfContentsItemProps {
-  title: string
-  linkId?: string
+  title?: string | undefined
+  linkId?: string | undefined
   scrollFromId?: string
+  depth?: number
 }
 
-const TableOfContentsItem = ({ title, linkId, scrollFromId }: TableOfContentsItemProps) => {
-  const container = document.getElementById(ANCHOR_ID)
+const TableOfContentsItem = ({ title = '', linkId = '', scrollFromId, depth }: TableOfContentsItemProps) => {
+  const [container, setContainer] = useState<HTMLElement | null>(null)
+  useEffect(() => {
+    setContainer(document.getElementById(ANCHOR_ID))
+  }, [])
   const onClickItem = () => {
     if (linkId) {
       const target = document.getElementById(linkId)
@@ -54,7 +59,7 @@ const TableOfContentsItem = ({ title, linkId, scrollFromId }: TableOfContentsIte
   // return <></>
   if (container) {
     return createPortal(
-      <TableOfContentsItemWrap hasLinkId={!!linkId} onClick={onClickItem} key={title}>
+      <TableOfContentsItemWrap hasLinkId={!!linkId} depth={depth} onClick={onClickItem} key={title}>
         {title}
       </TableOfContentsItemWrap>,
       container,

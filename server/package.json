@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js & npx prisma generate --watch",
-    "migrate": "npx prisma migrate up --experimental",
+    "update-db": "npx prisma db push --preview-feature",
     "studio": "npx prisma studio"
   },
   "dependencies": {

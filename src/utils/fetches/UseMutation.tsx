@@ -44,6 +44,12 @@ const UseMutationComponent = ({ children, query, ownProps = {} }: UseMutationCom
       }
     }
   }
+
+  useEffect(() => {
+    if (options) {
+      onSubmit(options)
+    }
+  }, [options])
   useEffect(() => {
     if (called) {
       let msg

@@ -1,10 +1,13 @@
 type Query {
   getTasks: [Task]
-  getLightHouseData(taskId: ID!, subtype: String, stime: Float, etime: Float, includeColumns:String): LightHouseData
+  getLightHouseData(taskId: ID!, subtype: String, stime: Float, etime: Float, includeColumns: String): LightHouseData
+
+  getSettings: Settings
 }
 
 type Mutation {
   createTask(name: String!, description: String, type: TaskType): Task
+  updateSettings(settingsInput: SettingsInput): Settings
 }
 
 type LightHouseReportData {
@@ -30,6 +33,13 @@ type Task {
   createdAt: DateTime!
 }
 
+type Settings {
+  userId: String
+  github_personal_access_token: String
+}
+input SettingsInput {
+  github_personal_access_token: String
+}
 type Sprint {
   id: ID!
   name: String
