@@ -29,7 +29,7 @@ interface TitleWithIndexProps {
 
 const TitleWithIndex = ({ label, depth, actions = [] }: TitleWithIndexProps) => {
   return (
-    <div style={{ display: 'flex', gap: '8px', flexFlow: 'column' }}>
+    <div id={label} style={{ display: 'flex', gap: '8px', flexFlow: 'column' }}>
       {label}
       {!!actions && <div style={{ display: 'flex', gap: '8px', flexFlow: 'column' }}>{actions}</div>}
       <TableOfContentsItem title={label} linkId={label} depth={depth} />

@@ -50,13 +50,12 @@ export const StyledContentInner = styled(Content)`
 `
 export const StyledContent = styled(Content)<{ gap?: string }>`
   display: flex;
+  ${({ gap }) => gap && `padding: ${gap}; gap: ${gap};`};
   flex-flow: column;
   height: 100%;
   & ${StyledContentInner} {
     overflow: auto;
   }
-
-  ${({ gap }) => gap && `padding: ${gap}; gap: ${gap};`};
 `
 
 export const InfiniteScrollListWrapper = styled.div<{ hasNextPage?: boolean }>`

@@ -1,6 +1,6 @@
 import React, { useContext, useMemo, useState } from 'react'
 import { Button, Input } from 'antd'
-import { StyledContent } from 'styles/LayoutStyles'
+
 import { SettingsItem, SettingsItemChild, TitleWithIndex } from '../SettingsItemWrapper'
 import { UseQuery, UseQueryProps } from 'utils/fetches'
 import SettingsInput from '../SettingsInput'
@@ -27,41 +27,39 @@ const GithubPlugin = ({ data, loading }: UseQueryProps<GithubPluginProps>) => {
     }
   }
   return (
-    <StyledContent gap={'20px'}>
-      <SettingsItem
-        title={<TitleWithIndex label='Github' depth={0} />}
-        extra={<Button type={isDiff ? 'primary' : 'default'} icon={<ReloadOutlined onClick={refresh} />} />}
-      >
-        <SettingsItemChild
-          span={3}
-          label={
-            <TitleWithIndex
-              label='Personal Access Token'
-              depth={1}
-              actions={
-                <a
-                  target='_blank'
-                  href='https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token'
-                >
-                  Creating a personal access token
-                </a>
-              }
-            />
-          }
-        >
-          <SettingsInput
-            inputName='github_personal_access_token'
-            value={github_personal_access_token}
-            valueLoading={loading}
-            onSuccess={onSuccessUpdateToken}
+    <SettingsItem
+      title={<TitleWithIndex label='Github' depth={0} />}
+      extra={<Button type={isDiff ? 'primary' : 'default'} icon={<ReloadOutlined onClick={refresh} />} />}
+    >
+      <SettingsItemChild
+        span={3}
+        label={
+          <TitleWithIndex
+            label='Personal Access Token'
+            depth={1}
+            actions={
+              <a
+                target='_blank'
+                href='https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token'
+              >
+                Creating a personal access token
+              </a>
+            }
           />
-        </SettingsItemChild>
+        }
+      >
+        <SettingsInput
+          inputName='github_personal_access_token'
+          value={github_personal_access_token}
+          valueLoading={loading}
+          onSuccess={onSuccessUpdateToken}
+        />
+      </SettingsItemChild>
 
-        <SettingsItemChild span={3} label={<TitleWithIndex label='Repositories' depth={1} />}>
-          <GithubRepositories client={THIRD_PARTY.GITHUB} value={github_repositories} />
-        </SettingsItemChild>
-      </SettingsItem>
-    </StyledContent>
+      <SettingsItemChild span={3} label={<TitleWithIndex label='Repositories' depth={1} />}>
+        <GithubRepositories client={THIRD_PARTY.GITHUB} value={github_repositories} />
+      </SettingsItemChild>
+    </SettingsItem>
   )
 }
 export default UseQuery(GithubPlugin)`

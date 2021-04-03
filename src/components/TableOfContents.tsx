@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from 'react'
-import { Anchor, Layout } from 'antd'
+import React, { createContext, useContext, useEffect, useState } from 'react'
+
 import { createPortal } from 'react-dom'
 import styled from 'styled-components'
 
-const ANCHOR_ID = 'ANCHOR_ID'
+let CONTAINER_ID_DEFAULT = 'table_of_contents'
 const TableOfContentsItemWrap = styled.div<{ hasLinkId: boolean; depth?: number }>`
   ${(props) => props.hasLinkId && `cursor: pointer;`}
   ${(props) => props.depth && `padding-left: ${props.depth * 20}px;`}
   opacity: 0.3;
 `
-const TableOfContentsWrap = styled.div<{ fixed: boolean }>`
-  ${({ fixed }) => (fixed ? ` position: fixed; left: 0;top: 0;height: 100vh; z-index: -1;` : ``)}
+const TableOfContentsWrap = styled.div<{ fixedOnMask: boolean }>`
+  position: fixed;
+
+  ${({ fixedOnMask }) => (fixedOnMask ? `left: 0;top: 0;height: 100vh; z-index: -1;` : ``)}
 
   display: grid;
   gap: 8px;
@@ -29,10 +31,31 @@ const TableOfContentsWrap = styled.div<{ fixed: boolean }>`
   }
 `
 interface TableOfContentsProps {
-  fixed?: boolean
+  fixedOnMask?: boolean
 }
-const TableOfContents = ({ fixed = true }: TableOfContentsProps) => {
-  return <TableOfContentsWrap fixed={fixed} id={ANCHOR_ID}></TableOfContentsWrap>
+
+const TableOfContentsContext = createContext<{ containerId: string; scrollFromId?: string }>({
+  containerId: CONTAINER_ID_DEFAULT,
+  scrollFromId: '',
+})
+
+const TableOfContentsProvider = ({
+  children,
+  containerId = CONTAINER_ID_DEFAULT,
+  scrollFromId,
+}: {
+  children: React.ReactNode
+  containerId?: string
+  scrollFromId?: string
+}) => {
+  return (
+    <TableOfContentsContext.Provider value={{ containerId, scrollFromId }}>{children}</TableOfContentsContext.Provider>
+  )
+}
+
+const TableOfContents = ({ fixedOnMask = false }: TableOfContentsProps) => {
+  const { containerId } = useContext(TableOfContentsContext)
+  return <TableOfContentsWrap fixedOnMask={fixedOnMask} id={containerId}></TableOfContentsWrap>
 }
 
 interface TableOfContentsItemProps {
@@ -42,17 +65,22 @@ interface TableOfContentsItemProps {
   depth?: number
 }
 
-const TableOfContentsItem = ({ title = '', linkId = '', scrollFromId, depth }: TableOfContentsItemProps) => {
+const TableOfContentsItem = ({ title = '', linkId = '', depth }: TableOfContentsItemProps) => {
   const [container, setContainer] = useState<HTMLElement | null>(null)
+  const { containerId, scrollFromId } = useContext(TableOfContentsContext)
   useEffect(() => {
-    setContainer(document.getElementById(ANCHOR_ID))
-  }, [])
+    const container = document.getElementById(containerId)
+    if (container) {
+      setContainer(document.getElementById(containerId))
+    }
+  }, [containerId])
   const onClickItem = () => {
     if (linkId) {
       const target = document.getElementById(linkId)
-      const scrollFrom = scrollFromId ? document.getElementById(scrollFromId) : container?.parentElement
+      const scrollFrom = scrollFromId ? document.getElementById(scrollFromId)?.parentElement : container?.parentElement
       if (target?.offsetTop && scrollFrom) {
-        scrollFrom.scrollTo({ behavior: 'smooth', top: target?.offsetTop - 50 })
+        console.log('scrollFrom', scrollFrom?.offsetTop, target?.offsetTop)
+        scrollFrom.scrollTo({ behavior: 'smooth', top: Math.abs(target?.offsetTop - scrollFrom?.offsetTop) })
       }
     }
   }
@@ -69,4 +97,4 @@ const TableOfContentsItem = ({ title = '', linkId = '', scrollFromId, depth }: T
   }
 }
 
-export { TableOfContents as default, TableOfContentsItem }
+export { TableOfContents as default, TableOfContentsItem, TableOfContentsProvider }

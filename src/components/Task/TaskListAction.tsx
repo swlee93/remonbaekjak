@@ -34,7 +34,7 @@ const TaskListAction = (props: { text: string; record: any }) => {
         visible={isMetricsVisible}
         onClose={() => setMetricsVisible(false)}
       >
-        <TableOfContents />
+        <TableOfContents fixedOnMask={true} />
         <LightHouseMetrics {...record} />
       </Drawer>
     </Space>
