@@ -23,7 +23,10 @@ interface SettingsSelectProps {
   dropdownStyle?: CSSProperties
   optionListRenderer?: ({ setValue }?: any) => ReactElement<any, string | JSXElementConstructor<any>>
 }
-
+const SettingsSelectPlaceHolder = ({ valueLoading, ...props }: UseMutationProps<SettingsSelectProps>) => {
+  if (valueLoading) return <Select placeholder={'loading'} />
+  return <SettingsSelect {...props} />
+}
 const SettingsSelect = ({
   value,
   options,
@@ -40,6 +43,7 @@ const SettingsSelect = ({
   ])
 
   useEffect(() => {
+    console.log('inputValueState', 'updatedValue', inputValueState, updatedValue)
     const isDiff = updatedValue.slice().sort().join() !== inputValueState.slice().sort().join()
     if (isDiff) {
       setOptions({ settingsInput: { [inputName]: inputValueState } })
@@ -73,7 +77,7 @@ const SettingsSelect = ({
   )
 }
 
-export default UseMutation(SettingsSelect)`
+export default UseMutation(SettingsSelectPlaceHolder)`
   mutation updateSettings($settingsInput: SettingsInput) {
       updateSettings(settingsInput: $settingsInput) {
         github_repositories

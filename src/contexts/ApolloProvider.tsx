@@ -56,8 +56,7 @@ const authMiddleware = new ApolloLink((operation, forward) => {
   // add the authorization to the headers
 
   const clientStorage = new ClientStorage()
-  console.log('clientStorage', clientStorage.get('token'))
-  const authorization = `Bearer ${clientStorage.get('token') || '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'}`
+  const authorization = `Bearer ${clientStorage.get('token') || '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'}`
 
   operation.setContext({
     clientStorage,

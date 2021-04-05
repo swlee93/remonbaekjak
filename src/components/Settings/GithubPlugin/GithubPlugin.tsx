@@ -12,9 +12,7 @@ import { MenuContext } from 'contexts'
 interface GithubPluginProps {}
 
 const GithubPlugin = ({ data, loading }: UseQueryProps<GithubPluginProps>) => {
-  const { github_personal_access_token, github_repositories } = useMemo(() => {
-    return data?.getSettings || {}
-  }, [data])
+  const { github_personal_access_token, github_repositories } = useMemo(() => data?.getSettings || {}, [data])
   const { refresh } = useContext(MenuContext)
   const [token, setToken] = useState(github_personal_access_token)
   const isDiff = github_personal_access_token !== token
@@ -57,7 +55,7 @@ const GithubPlugin = ({ data, loading }: UseQueryProps<GithubPluginProps>) => {
       </SettingsItemChild>
 
       <SettingsItemChild span={3} label={<TitleWithIndex label='Repositories' depth={1} />}>
-        <GithubRepositories client={THIRD_PARTY.GITHUB} value={github_repositories} />
+        <GithubRepositories client={THIRD_PARTY.GITHUB} value={github_repositories} valueLoading={loading} />
       </SettingsItemChild>
     </SettingsItem>
   )

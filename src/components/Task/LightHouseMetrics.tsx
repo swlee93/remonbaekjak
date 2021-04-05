@@ -1,3 +1,4 @@
+import { useQuery } from '@apollo/client'
 import { Line, History } from 'components/Chart'
 import TableOfContents, { TableOfContentsItem } from 'components/TableOfContents'
 import { THIRD_PARTY } from 'contexts/ApolloProvider'

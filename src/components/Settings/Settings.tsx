@@ -9,8 +9,8 @@ const Settings = () => {
       <HeaderPlace>
         <>Settings</>
       </HeaderPlace>
-      {/* Plugins */}
       <StyledContent gap='20px' id='scroll_container'>
+        {/* Plugins */}
         <GithubPlugin />
       </StyledContent>
       <StyledSider>

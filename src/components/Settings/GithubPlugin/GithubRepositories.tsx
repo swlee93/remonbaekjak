@@ -1,20 +1,24 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { UseQuery, UseQueryProps } from 'utils/fetches'
-import { List, message, Avatar, Spin, Button } from 'antd'
+import { List, Spin, Button, Checkbox, Select } from 'antd'
 
 import InfiniteScroll from 'react-infinite-scroller'
 import { InfiniteScrollWrapper, InfiniteScrollLoadingWrapper, StyledContent } from 'styles/LayoutStyles'
-import { CheckCircleFilled, CheckOutlined } from '@ant-design/icons'
+import { BranchesOutlined, CheckOutlined } from '@ant-design/icons'
 import SettingsSelect from '../SettingsSelect'
+import ButtonGroup from 'antd/lib/button/button-group'
 
 interface GithubRepositoriesProps {}
+
+const getRepositoryId = ({ nameWithOwner }: any, { name }: any) => `${nameWithOwner}/${name}`
+
 const GithubRepositories = ({
   value,
+  valueLoading,
   data,
   loading,
   setOptions,
   error,
-  refetchValue,
 }: UseQueryProps<GithubRepositoriesProps>) => {
   const repositories = data?.viewer?.repositories
 
@@ -27,16 +31,27 @@ const GithubRepositories = ({
     }
   }, [data?.viewer?.repositories?.edges])
 
-  const options = useMemo(() => {
-    return dataSource.map(({ node: { id, name } }) => ({ label: name, value: `${name}:${id}` }))
-  }, [dataSource])
+  const options = useMemo(
+    () =>
+      dataSource.reduce<any[]>((acc, { node }: any) => {
+        if (Array.isArray(node?.refs)) {
+          const { refs } = node
+          if (refs?.edges) {
+            acc = [...acc, ...refs.edges.map(({ node: ref }: any) => ({ value: getRepositoryId(node, ref) }))]
+          }
+        }
+        return acc
+      }, []),
+    [dataSource],
+  )
 
-  if (!dataSource?.length) return <></>
+  // if (!dataSource?.length) return <></>
   return (
     <StyledContent>
       <SettingsSelect
         inputName='github_repositories'
         value={value}
+        valueLoading={valueLoading}
         options={options}
         dropdownStyle={{ display: 'none' }}
         optionListRenderer={({ setValue, value: valueState }: any) => (
@@ -72,10 +87,7 @@ const OptionListRenderer = ({ repositories, value, setValue, setOptions, dataSou
       setOptions({ variables: { endCursor } })
     }
   }
-
-  const onClickRepo = ({ id, name }: any) => {
-    const v = `${name}:${id}`
-    console.log('onClickRepo', v)
+  const onCheckRepositories = (v: string) => {
     if (Array.isArray(value)) {
       const checked = value.includes(v)
       if (checked) {
@@ -87,6 +99,7 @@ const OptionListRenderer = ({ repositories, value, setValue, setOptions, dataSou
       setValue([v])
     }
   }
+
   return (
     <InfiniteScrollWrapper
       hasNextPage={hasNextPage}
@@ -104,20 +117,29 @@ const OptionListRenderer = ({ repositories, value, setValue, setOptions, dataSou
       >
         <List
           dataSource={dataSource}
-          renderItem={(item: any, index) => (
-            <List.Item
-              key={item?.node?.id || index}
-              actions={[
-                <Button
-                  type={value?.includes(`${item?.node?.name}:${item?.node?.id}`) ? 'primary' : 'text'}
-                  onClick={() => onClickRepo(item?.node)}
-                  icon={<CheckOutlined />}
-                />,
-              ]}
-            >
-              <List.Item.Meta title={item?.node?.name} description={item?.node?.description} />
-            </List.Item>
-          )}
+          renderItem={(item: any, index) => {
+            const refValues = value?.filter((v: string) => v.includes(item?.node?.nameWithOwner))
+            return (
+              <List.Item
+                key={item?.node?.id || index}
+                actions={[
+                  <Select
+                    placeholder='Branch'
+                    suffixIcon={<BranchesOutlined />}
+                    onSelect={onCheckRepositories}
+                    value={refValues}
+                    bordered={!!refValues?.length}
+                  >
+                    {item?.node?.refs?.edges?.map(({ node: ref }: any) => (
+                      <Select.Option value={getRepositoryId(item?.node, ref)}>{ref.name}</Select.Option>
+                    ))}
+                  </Select>,
+                ]}
+              >
+                <List.Item.Meta title={item?.node?.nameWithOwner} description={item?.node?.description} />
+              </List.Item>
+            )
+          }}
         >
           {loading && hasNextPage && (
             <InfiniteScrollLoadingWrapper>
@@ -131,27 +153,32 @@ const OptionListRenderer = ({ repositories, value, setValue, setOptions, dataSou
 }
 
 export default UseQuery(GithubRepositories)`
-    query  GithubRepositories($endCursor: String) {
-        viewer {
-            repositories(first: 10, after: $endCursor) {
-                totalCount
-                edges {
-                    node {
-                        id
-                        name
-                        description
-                        mirrorUrl
-                        openGraphImageUrl
-                    }
-                    cursor
+  query  GithubRepositories($endCursor: String) {
+    viewer {
+      repositories(first: 10, after: $endCursor) {
+        totalCount
+        edges {
+          node {
+            id
+            nameWithOwner
+            description
+            refs(refPrefix: "refs/heads/", first: 100) {
+              edges {
+                node {
+                  name 
+                  prefix
                 }
-                pageInfo {
-                    endCursor
-                    hasNextPage
-                }
+              }
             }
+            
+          }
+          cursor
         }
-
+        pageInfo {
+          endCursor
+          hasNextPage
+        }
+      }
     }
-    
+  }
 `

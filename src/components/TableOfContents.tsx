@@ -3,7 +3,8 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import styled from 'styled-components'
 
-let CONTAINER_ID_DEFAULT = 'table_of_contents'
+const CONTAINER_ID_DEFAULT = 'table_of_contents'
+
 const TableOfContentsItemWrap = styled.div<{ hasLinkId: boolean; depth?: number }>`
   ${(props) => props.hasLinkId && `cursor: pointer;`}
   ${(props) => props.depth && `padding-left: ${props.depth * 20}px;`}
@@ -79,7 +80,6 @@ const TableOfContentsItem = ({ title = '', linkId = '', depth }: TableOfContents
       const target = document.getElementById(linkId)
       const scrollFrom = scrollFromId ? document.getElementById(scrollFromId)?.parentElement : container?.parentElement
       if (target?.offsetTop && scrollFrom) {
-        console.log('scrollFrom', scrollFrom?.offsetTop, target?.offsetTop)
         scrollFrom.scrollTo({ behavior: 'smooth', top: Math.abs(target?.offsetTop - scrollFrom?.offsetTop) })
       }
     }

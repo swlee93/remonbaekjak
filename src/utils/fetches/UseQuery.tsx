@@ -27,6 +27,7 @@ const UseQueryContext = createContext<UseQueryProps<any>>({
 
 const getVariablesFromMatchProps = (query: string = '', props: any = {}) => {
   const regex = /(?<!\\)\$([^\W$]+)/g
+
   let variables: any = {}
   let context: any = Object.assign({}, props)
   let test
