@@ -8,8 +8,8 @@ import LightHouseReport from './LightHouseReport'
 import LightHouseMetrics from './LightHouseMetrics'
 import TableOfContents from 'components/TableOfContents'
 
-const TaskListAction = (props: { text: string; record: any }) => {
-  const { text, record } = props
+const TaskListAction = (props: { record: any }) => {
+  const { record } = props
   const [isReportListVisible, setReportListVisible] = useState(false)
   const [isMetricsVisible, setMetricsVisible] = useState(false)
   return (

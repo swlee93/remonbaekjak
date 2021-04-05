@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { Line as AntdLine } from '@ant-design/charts'
 import ErrorBoundary from 'components/ErrorBoundary'
-import { Card } from 'antd'
+import { Card, Space } from 'antd'
 import Meta from 'antd/lib/card/Meta'
 interface LineInterface {
   yField: string
@@ -31,8 +31,9 @@ const Line = ({ data, yField, xField = 'time', loading, linkId }: LineInterface)
   return (
     <>
       <ErrorBoundary>
-        <Card id={linkId} loading={loading} bodyStyle={{ display: 'grid', gap: 24 }}>
+        <Card id={linkId} loading={loading}>
           <Meta title={yField} />
+
           <AntdLine {...(config || {})} />
         </Card>
       </ErrorBoundary>

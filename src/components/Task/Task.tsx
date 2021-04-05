@@ -5,26 +5,15 @@ import TaskList from './TaskList'
 import { HeaderPlace } from 'components/Header'
 
 import AddTask from './AddTask'
-const Task = ({ data, loading, error }: UseQueryProps<any>) => {
+const Task = () => {
   return (
     <>
       <HeaderPlace>
         <AddTask />
       </HeaderPlace>
-      <TaskList data={data?.getTasks} loading={loading} error={error} />
+      <TaskList />
     </>
   )
 }
 
-export default UseQuery(Task)`
-  query {
-    getTasks {
-      id,
-      description,
-      type,
-      name,
-      createdBy,
-      createdAt
-    }
-  }
-`
+export default Task

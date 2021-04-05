@@ -12,7 +12,7 @@ const TableOfContentsItemWrap = styled.div<{ hasLinkId: boolean; depth?: number 
 `
 const TableOfContentsWrap = styled.div<{ fixedOnMask: boolean }>`
   position: fixed;
-
+  max-height: calc(100vh - 84px);
   ${({ fixedOnMask }) => (fixedOnMask ? `left: 0;top: 0;height: 100vh; z-index: -1;` : ``)}
 
   display: grid;

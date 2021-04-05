@@ -1,4 +1,4 @@
-import React, { createContext, FunctionComponent, useMemo, useState } from 'react'
+import React, { createContext, FunctionComponent, useEffect, useMemo, useState } from 'react'
 import { ApolloError, gql, QueryHookOptions, useQuery } from '@apollo/client'
 type Children = FunctionComponent<UseQueryProps<any>>
 interface UseQueryComponentProps {
@@ -40,6 +40,23 @@ const getVariablesFromMatchProps = (query: string = '', props: any = {}) => {
 
   return { variables, context }
 }
+const getObjectID = (obj: any = {}): string =>
+  Object.keys(obj)
+    .sort()
+    .reduce<string>((acc, key) => {
+      const value: any = obj[key]
+      switch (typeof value) {
+        case 'string':
+        case 'undefined':
+        case 'boolean':
+        case 'number':
+          return (acc += `${key}:${value}`)
+        case 'object':
+          return (acc += `${key}:${getObjectID(value)}`)
+        default:
+          return acc
+      }
+    }, '')
 
 const UseQueryComponent = ({ children, query, ownProps = {} }: UseQueryComponentProps) => {
   const [QUERY_GENERATED] = useState(() => {
@@ -47,7 +64,12 @@ const UseQueryComponent = ({ children, query, ownProps = {} }: UseQueryComponent
   })
 
   const [options, setOptions] = useState<QueryHookOptions>(() => getVariablesFromMatchProps(query, ownProps))
+  const matchProps = useMemo(() => getVariablesFromMatchProps(query, ownProps), [query, getObjectID(ownProps)])
   const { loading, error, data, refetch, called } = useQuery(QUERY_GENERATED, options)
+
+  useEffect(() => {
+    setOptions({ ...(options || {}), ...(matchProps || {}) })
+  }, [matchProps])
 
   return (
     <UseQueryContext.Provider value={{ loading, error, data, setOptions, refetch, called }}>

@@ -2,8 +2,9 @@ import { Table } from 'antd'
 import { SortableContainer as SC, SortableElement as SE, SortableHandle as SH } from 'react-sortable-hoc'
 import { MenuOutlined } from '@ant-design/icons'
 import arrayMove from 'array-move'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import TaskListAction from './TaskListAction'
+import { UseQuery, UseQueryProps } from 'utils/fetches'
 
 const DragHandle = SH(() => <MenuOutlined style={{ cursor: 'grab', color: '#999' }} />)
 
@@ -41,14 +42,15 @@ const columns = [
   {
     title: 'Action',
     key: 'action',
-    render: (text: string, record: any) => <TaskListAction text={text} record={record} />,
+    render: (text: string, record: any) => <TaskListAction record={record} />,
   },
 ]
 
 const SortableElement = SE((props: any) => <tr {...props} />)
 const SortableContainer = SC((props: any) => <tbody {...props} />)
 
-const TaskList = ({ data, loading, error }: any) => {
+const TaskList = ({ data: _data_, loading, error }: UseQueryProps<any>) => {
+  const data = useMemo(() => _data_?.getTasks, [_data_])
   const [dataSource, setDataSource] = useState(data || [])
 
   useEffect(() => {
@@ -91,4 +93,15 @@ const TaskList = ({ data, loading, error }: any) => {
   )
 }
 
-export default TaskList
+export default UseQuery(TaskList)`
+  query {
+    getTasks {
+      id,
+      description,
+      type,
+      name,
+      createdBy,
+      createdAt
+    }
+  }
+`
