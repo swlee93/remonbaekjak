@@ -30,6 +30,7 @@ class TaskManager {
   }
 
   getTasks = () => this.tasks
+  getTaskBy = ({ taskId }) => this.tasks.data.find(({ id }) => taskId == id)
 
   setTasks = (data = [], timestamp = Date.now()) => {
     this.tasks.data = data

@@ -23,5 +23,6 @@
 const { getTasks } = require('./models/Task')
 const { getLightHouseData } = require('./models/LightHouseData')
 const { getSettings } = require('./models/Settings')
+const { getReportInfo } = require('./models/Reports')
 
-module.exports = { getTasks, getLightHouseData, getSettings }
+module.exports = { getTasks, getLightHouseData, getSettings, getReportInfo }

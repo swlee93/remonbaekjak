@@ -1,7 +1,7 @@
 type Query {
   getTasks: [Task]
-  getLightHouseData(taskId: ID!, subtype: String, stime: Float, etime: Float, includeColumns: String): LightHouseData
-
+  getLightHouseData(taskId: ID, subtype: String, stime: Float, etime: Float, includeColumns: String): LightHouseData
+  getReportInfo(taskType: TaskType, stime: Float, etime: Float): [LightHouseReportData]
   getSettings: Settings
 }
 
@@ -13,6 +13,10 @@ type Mutation {
 type LightHouseReportData {
   timestamp: Float
   data: String
+}
+
+extend type LightHouseReportData {
+  task: Task
 }
 
 type LightHouseData {

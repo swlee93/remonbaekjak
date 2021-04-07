@@ -15,19 +15,20 @@ class LightHouse {
       const chrome = await chromeLauncher.launch({ chromeFlags: ['--headless'] })
       const options = { logLevel: 'info', output: 'json', onlyCategories: ['performance'], port: chrome.port }
       const runnerResult = await lighthouse(this.task.name || 'https://example.com', options)
-
+      const metricsScore = runnerResult.lhr.categories.performance.score * 100
       // `.report` is the HTML report as a string
       const reportJson = runnerResult.report
       const now = Date.now()
       const startOfDate = new Date().setHours(0, 0, 0, 0)
-
-      const reportName = 'filedb/lighthouse/report/' + this.task.id + '/' + now + '.json'
-      const performanceName = 'filedb/lighthouse/performance/' + this.task.id + '/' + startOfDate + '.csv'
+      const taskId = this.task.id
+      const reportName = 'filedb/lighthouse/report/' + taskId + '/' + now + '.json'
+      const performanceName = 'filedb/lighthouse/performance/' + taskId + '/' + startOfDate + '.csv'
 
       Promise.all([fse.outputFileSync(reportName, reportJson), fse.readJsonSync(reportName)])
         .then(([_, report]) => {
           const isExist = fse.pathExistsSync(performanceName)
           const metrics = report.audits.metrics.details || {}
+
           const metricsItems = metrics.items || []
           const csv = metricsItems.reduce(
             (acc, items) => {
@@ -37,7 +38,7 @@ class LightHouse {
               })
               return acc
             },
-            { header: ['time'], values: [now] },
+            { header: ['time', 'taskId', 'score'], values: [now, taskId, metricsScore] },
           )
 
           if (isExist) {

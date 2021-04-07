@@ -1,21 +1,48 @@
 const fse = require('fs-extra')
 const csv = require('csvtojson')
 
-const readLightHouseReportData = async (taskId, stime = Date.now() - 86400000, etime = Date.now()) => {
-  const reportpath = 'filedb/lighthouse/report/' + taskId
-
+const getTargetFileList = (root, dir, extention) => {
   let files = []
-  if (fse.pathExistsSync(reportpath)) {
-    files = fse.readdirSync(reportpath)
+  if (dir) {
+    const path = `${root}/${dir}`
+    let pathFiles = []
+    if (fse.pathExistsSync(path)) {
+      pathFiles = fse.readdirSync(path)
+    }
+    pathFiles.forEach((pathFile) => {
+      const [name] = pathFile.split(`.${extention}`)
+      files.push({ path: `${path}/${pathFile}`, name })
+    })
+  } else {
+    // dir 없는 경우 => 전체 dir 읽기
+    if (fse.pathExistsSync(root)) {
+      const rootfolders = fse.readdirSync(root)
+      files = rootfolders.reduce((acc, rootfolder) => {
+        const rootpath = `${root}/${rootfolder}`
+        let rootpathFiles = []
+        if (fse.pathExistsSync(rootpath)) {
+          rootpathFiles = fse.readdirSync(rootpath)
+        }
+        rootpathFiles.forEach((subfile) => {
+          const [name] = subfile.split(`.${extention}`)
+          acc.push({ path: `${rootpath}/${subfile}`, name })
+        })
+        return acc
+      }, [])
+    }
   }
+  return files
+}
 
-  return await files.reduce((acc, filename) => {
-    const timestamp = filename.split('.')[0]
-    const reportfile = reportpath + '/' + timestamp + '.json'
+const readLightHouseReportData = async (taskId, stime = Date.now() - 86400000, etime = Date.now()) => {
+  let files = getTargetFileList('filedb/lighthouse/report', taskId, 'json')
+
+  return await files.reduce((acc, { path, name }) => {
+    const timestamp = Number(name)
 
     if (stime < timestamp && etime > timestamp) {
-      let data = fse.readFileSync(reportfile).toString()
-      acc.push({ data, timestamp: Number(timestamp) })
+      let data = fse.readFileSync(path).toString()
+      acc.push({ data, timestamp })
     }
 
     return acc
@@ -23,20 +50,15 @@ const readLightHouseReportData = async (taskId, stime = Date.now() - 86400000, e
 }
 
 const readLightHouseMetricsData = async (taskId, stime = Date.now() - 86400000, etime = Date.now(), includeColumns) => {
-  const performancepath = 'filedb/lighthouse/performance/' + taskId
-  let files = []
-  if (fse.pathExistsSync(performancepath)) {
-    files = fse.readdirSync(performancepath)
-  }
+  let files = getTargetFileList('filedb/lighthouse/performance', taskId, 'csv')
   let results = []
-  await files.reduce(async (acc, filename) => {
+  await files.reduce(async (acc, { path, name }) => {
     await acc
-    const timestamp = filename.split('.')[0]
-    const performancefile = performancepath + '/' + timestamp + '.csv'
+    const timestamp = Number(name)
 
     if (stime < timestamp && etime > timestamp) {
-      return csv({ includeColumns: includeColumns ? new RegExp(`time|${includeColumns}`) : undefined })
-        .fromFile(performancefile)
+      return csv({ includeColumns: includeColumns ? new RegExp(`time|taskId|${includeColumns}`) : undefined })
+        .fromFile(path)
         .then(async (result) => {
           results = [...results, ...result]
         })
@@ -45,6 +67,34 @@ const readLightHouseMetricsData = async (taskId, stime = Date.now() - 86400000, 
   }, Promise.resolve())
 
   return results
+}
+
+const getLightHouseReportInfo = async (parent, args, context, info) => {
+  const { stime = Date.now() - 86400000, etime = Date.now() } = args
+  const { taskManager } = context
+  const reportpath = 'filedb/lighthouse/report'
+  let taskIds = []
+  if (fse.pathExistsSync(reportpath)) {
+    taskIds = fse.readdirSync(reportpath)
+  }
+
+  return await taskIds.reduce((acc, taskId) => {
+    const filepath = `${reportpath}/${taskId}`
+    let files = []
+    if (fse.pathExistsSync(filepath)) {
+      files = fse.readdirSync(filepath)
+    }
+    files.forEach((filename) => {
+      const timestamp = Number(filename.split('.')[0])
+
+      if (stime < timestamp && etime > timestamp) {
+        const task = taskManager.getTaskBy({ taskId })
+        acc.push({ task, timestamp })
+      }
+    })
+
+    return acc
+  }, [])
 }
 
 const getLightHouseData = (parent, args, context, info) => {
@@ -72,4 +122,4 @@ const getLightHouseData = (parent, args, context, info) => {
   }
 }
 
-module.exports = { getLightHouseData }
+module.exports = { getLightHouseData, getLightHouseReportInfo }
