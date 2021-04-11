@@ -3,8 +3,8 @@ import { HeaderPlace } from 'components/Header'
 import TableOfContents, { TableOfContentsProvider } from 'components/TableOfContents'
 import { StyledContent, StyledSider } from 'styles/LayoutStyles'
 import LightHouseMetrics from 'components/Task/LightHouseMetrics'
-import TaskSelect from './TaskSelect'
-import TimeSelect, { Time } from './TimeSelect'
+import TaskSelect from 'components/Options/TaskSelect'
+import TimeSelect, { Time } from 'components/Options/TimeSelect'
 import { Space } from 'antd'
 const Metrics = () => {
   const [task, setTask] = useState()

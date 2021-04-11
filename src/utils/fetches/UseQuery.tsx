@@ -68,6 +68,7 @@ const UseQueryComponent = ({ children, query, ownProps = {} }: UseQueryComponent
   const { loading, error, data, refetch, called } = useQuery(QUERY_GENERATED, options)
 
   useEffect(() => {
+    console.log('matchProps', matchProps)
     setOptions({ ...(options || {}), ...(matchProps || {}) })
   }, [matchProps])
 

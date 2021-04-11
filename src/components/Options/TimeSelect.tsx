@@ -6,7 +6,10 @@ export interface Time {
   etime: number | undefined
 }
 
-const TimeSelect = ({ onChange }: { onChange: (time: Time) => void }) => {
+interface TimeSelectProps {
+  onChange: (time: Time) => void
+}
+const TimeSelect = ({ onChange }: TimeSelectProps) => {
   const [time, setTime] = useState({ stime: undefined, etime: undefined })
   const onChangeTime = ([smoment, emoment]: any) => {
     setTime({ stime: smoment.valueOf(), etime: emoment.valueOf() })

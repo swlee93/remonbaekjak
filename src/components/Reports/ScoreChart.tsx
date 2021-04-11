@@ -3,8 +3,9 @@ import React from 'react'
 import { UseQuery, UseQueryProps } from 'utils/fetches'
 interface ScoreChartInterface {}
 const ScoreChart = ({ data }: UseQueryProps<ScoreChartInterface>) => {
+  console.log('data', data)
   const performanceData = data?.getLightHouseData?.performance || []
-  return <Line data={performanceData} yField={'score'} seriesField='taskId' />
+  return <Line data={performanceData} yField={'score'} seriesField='taskId' chartOnly={true} />
 }
 
 export default UseQuery(ScoreChart)`

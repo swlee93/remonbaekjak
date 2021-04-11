@@ -2,8 +2,11 @@ import { useEffect, useMemo, useState } from 'react'
 
 import { Select } from 'antd'
 import { UseQuery, UseQueryProps } from 'utils/fetches'
+interface TaskSelectProps {
+  setTask: Function
+}
 
-const TaskSelect = ({ data: _data_, loading, error, called, setTask }: UseQueryProps<any>) => {
+const TaskSelect = ({ data: _data_, loading, error, called, setTask }: UseQueryProps<TaskSelectProps>) => {
   const data = useMemo(() => _data_?.getTasks || [], [_data_])
   const [selectedId, setSelectedId] = useState()
   const [selectedTask, setSelectedTask] = useState()

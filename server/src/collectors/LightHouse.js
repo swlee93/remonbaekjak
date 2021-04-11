@@ -1,9 +1,10 @@
 const { sleep } = require('../utils')
-
+const { FILEDB_PATH } = require('../constants')
 const fse = require('fs-extra')
 
 const lighthouse = require('lighthouse')
 const chromeLauncher = require('chrome-launcher')
+const { getLightHouseReportAuditSummary } = require('../resolvers/models/Reports')
 
 class LightHouse {
   task
@@ -14,17 +15,27 @@ class LightHouse {
     await (async () => {
       const chrome = await chromeLauncher.launch({ chromeFlags: ['--headless'] })
       const options = { logLevel: 'info', output: 'json', onlyCategories: ['performance'], port: chrome.port }
-      const runnerResult = await lighthouse(this.task.name || 'https://example.com', options)
-      const metricsScore = runnerResult.lhr.categories.performance.score * 100
-      // `.report` is the HTML report as a string
-      const reportJson = runnerResult.report
-      const now = Date.now()
-      const startOfDate = new Date().setHours(0, 0, 0, 0)
-      const taskId = this.task.id
-      const reportName = 'filedb/lighthouse/report/' + taskId + '/' + now + '.json'
-      const performanceName = 'filedb/lighthouse/performance/' + taskId + '/' + startOfDate + '.csv'
 
-      Promise.all([fse.outputFileSync(reportName, reportJson), fse.readJsonSync(reportName)])
+      // 원본 데이터
+      const runnerResult = await lighthouse(this.task.name || 'https://example.com', options)
+      const reportJson = runnerResult.report
+      const metricsScore = runnerResult.lhr.categories.performance.score * 100
+      const reportSummary = getLightHouseReportAuditSummary(reportJson, metricsScore)
+
+      // 파일명
+      const taskId = this.task.id
+      const timestamp = Date.now()
+      const reportName = FILEDB_PATH.REPORT + '/' + taskId + '/' + timestamp + '.json'
+      const reportSummaryName = FILEDB_PATH.REPORT_SUMMARY + '/' + taskId + '/' + timestamp + '.json'
+      const startOfDate = new Date().setHours(0, 0, 0, 0)
+      const performanceName = FILEDB_PATH.METRICS + '/' + taskId + '/' + startOfDate + '.csv'
+
+      // 데이터 저장
+      Promise.all([
+        fse.outputFileSync(reportName, reportJson),
+        fse.readJsonSync(reportName),
+        fse.outputJSONSync(reportSummaryName, reportSummary),
+      ])
         .then(([_, report]) => {
           const isExist = fse.pathExistsSync(performanceName)
           const metrics = report.audits.metrics.details || {}
@@ -38,7 +49,7 @@ class LightHouse {
               })
               return acc
             },
-            { header: ['time', 'taskId', 'score'], values: [now, taskId, metricsScore] },
+            { header: ['time', 'taskId', 'score'], values: [timestamp, taskId, metricsScore] },
           )
 
           if (isExist) {
