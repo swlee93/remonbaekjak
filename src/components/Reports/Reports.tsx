@@ -1,6 +1,6 @@
 import { Button, Collapse, Space } from 'antd'
 import ButtonGroup from 'antd/lib/button/button-group'
-import Checkbox from 'antd/lib/checkbox/Checkbox'
+import Checkbox, { CheckboxChangeEvent } from 'antd/lib/checkbox/Checkbox'
 import CollapsePanel from 'antd/lib/collapse/CollapsePanel'
 import Text from 'antd/lib/typography/Text'
 import { HeaderPlace } from 'components/Header'
@@ -19,8 +19,8 @@ export enum VIEW_MODE {
 const Reports = () => {
   const [time, setTime] = useState<Time>({ stime: undefined, etime: undefined })
   const [viewMode, setViewMode] = useState<VIEW_MODE>(VIEW_MODE.DEFAULT)
-  const [compareA, setCompareA] = useState()
-  const [compareB, setCompareB] = useState()
+  const [compareA, setCompareA] = useState<any>()
+  const [compareB, setCompareB] = useState<any>()
 
   const onChangeCompare = (target: 'A' | 'B' | undefined, reportInfo: any | undefined) => {
     if (viewMode !== VIEW_MODE.COMPARE) {
@@ -37,13 +37,19 @@ const Reports = () => {
       default:
     }
   }
-  const [activeOptionPanelKey, setActiveOptionPanelKey] = useState<string | string[]>('')
-
+  const [activeOptionPanelKey, setActiveOptionPanelKey] = useState<string[] | string>([])
+  const onClickCompareMode = (evt: CheckboxChangeEvent) => {
+    evt.preventDefault()
+    setViewMode(evt?.target?.checked ? VIEW_MODE.COMPARE : VIEW_MODE.DEFAULT)
+    evt.stopPropagation()
+  }
   useEffect(() => {
     if (viewMode === VIEW_MODE.COMPARE && !!compareA && !!compareB) {
       setActiveOptionPanelKey(['compare'])
+    } else if (viewMode !== VIEW_MODE.COMPARE || !compareA || !compareB) {
+      setActiveOptionPanelKey([])
     }
-  }, [viewMode, !!compareA, !!compareB])
+  }, [viewMode === VIEW_MODE.COMPARE, !!compareA, !!compareB])
   return (
     <>
       <HeaderPlace>
@@ -59,21 +65,44 @@ const Reports = () => {
             disabled={!compareA || !compareB}
             extra={
               <ButtonGroup size='small'>
-                <Button type={compareA ? 'primary' : 'dashed'} onClick={() => onChangeCompare(undefined, undefined)}>
-                  A
-                </Button>
-                <Button type={compareB ? 'primary' : 'dashed'} onClick={() => onChangeCompare(undefined, undefined)}>
-                  B
-                </Button>
+                <Button
+                  type={compareA ? 'primary' : 'dashed'}
+                  onClick={(e) => {
+                    onChangeCompare('A', undefined)
+                    e.stopPropagation()
+                  }}
+                  children={
+                    !!compareA?.timestamp ? (
+                      <Space>
+                        <Text type='secondary'>A</Text>
+                        <Text>{new Date(compareA.timestamp).toLocaleString()}</Text>
+                      </Space>
+                    ) : (
+                      'A'
+                    )
+                  }
+                />
+
+                <Button
+                  type={compareB ? 'primary' : 'dashed'}
+                  onClick={(e) => {
+                    onChangeCompare('B', undefined)
+                    e.stopPropagation()
+                  }}
+                  children={
+                    !!compareB?.timestamp ? (
+                      <Space>
+                        <Text type='secondary'>B</Text>
+                        <Text>{new Date(compareB.timestamp).toLocaleString()}</Text>
+                      </Space>
+                    ) : (
+                      'B'
+                    )
+                  }
+                />
               </ButtonGroup>
             }
-            header={
-              <Checkbox
-                onChange={({ target: { checked } }) => setViewMode(checked ? VIEW_MODE.COMPARE : VIEW_MODE.DEFAULT)}
-              >
-                Compare
-              </Checkbox>
-            }
+            header={<Checkbox onChange={onClickCompareMode}>Compare</Checkbox>}
           >
             <ReportCompareView compareA={compareA} compareB={compareB} />
           </CollapsePanel>

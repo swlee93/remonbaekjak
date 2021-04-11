@@ -45,10 +45,7 @@ const ReportList = ({
   const [reportInfo, setReportInfo] = useState<ReportInfoData>()
   const [reportInfoTabKey, setReportInfoTabKey] = useState<'report' | 'scores'>('report')
   const [showReportInfo, setShowReportInfo] = useState<boolean>(false)
-  const onClickReportInfoMore = (report: ReportInfoData) => {
-    setReportInfo(report)
-    setShowReportInfo(true)
-  }
+
   const [isExpand, setExpand] = useState(false)
   const onClickListItem = (info: ReportInfoData) => {
     switch (viewMode) {
@@ -70,13 +67,15 @@ const ReportList = ({
         }
         break
       default:
+        setReportInfo(info)
+        setShowReportInfo(true)
     }
   }
   return (
     <>
       <List
         loading={loading}
-        grid={{ gutter: 16, column: 4 }}
+        grid={{ gutter: 16, xl: 6, md: 4, sm: 2, xs: 1 }}
         split={false}
         dataSource={reports}
         renderItem={(info: ReportInfoData) => {
@@ -98,14 +97,6 @@ const ReportList = ({
                   />
                 ) : undefined
               }
-              actions={[
-                <Button
-                  size='small'
-                  type='text'
-                  icon={<EllipsisOutlined />}
-                  onClick={() => onClickReportInfoMore(info)}
-                />,
-              ]}
             >
               <List.Item.Meta
                 avatar={

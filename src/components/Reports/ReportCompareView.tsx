@@ -1,10 +1,8 @@
-import { Card, Descriptions, Progress, Space, Statistic, Tooltip } from 'antd'
+import { Card, Col, Descriptions, Progress, Row, Space, Statistic, Tooltip } from 'antd'
 import Text from 'antd/lib/typography/Text'
 import { useMemo } from 'react'
-import { ChartCard, MiniProgress } from 'ant-design-pro/lib/Charts'
-import Trend from 'ant-design-pro/lib/Trend'
 
-import Icon, { ArrowDownOutlined, ArrowUpOutlined, MinusOutlined } from '@ant-design/icons'
+import { ArrowDownOutlined, ArrowUpOutlined, MinusOutlined } from '@ant-design/icons'
 
 interface ReportInfoData {
   timestamp: number
@@ -21,6 +19,9 @@ interface ReportCompareViewInterface {
   compareA?: ReportInfoData
   compareB?: ReportInfoData
 }
+
+const toFixed = (value: number) => Number(value.toFixed(2))
+
 const ReportCompareView = ({ compareA, compareB }: ReportCompareViewInterface) => {
   const audits = useMemo(() => {
     const compareBAudits = compareB?.data?.audits || {}
@@ -31,31 +32,49 @@ const ReportCompareView = ({ compareA, compareB }: ReportCompareViewInterface) =
       return acc
     }, [])
   }, [compareA?.data?.audits, compareB?.data?.audits])
-  console.log('audits', audits)
 
   if (!compareA || !compareB) return <Text>!compareA || !compareB</Text>
   return (
     <>
-      <Card>
+      <Row justify='space-between'>
         {audits.map((audit: any, index: number) => {
           const isSame = audit.score === audit.bAudit.score
           const isUp = audit.score - audit.bAudit.score > 0
+          const gap = toFixed(audit.numericValue - (audit.bAudit.numericValue || 0))
+          const status = isSame ? 'secondary' : isUp ? 'success' : 'danger'
+
           return (
-            <Card.Grid key={index}>
-              <Statistic
-                prefix={isSame ? undefined : isUp ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
-                title={audit.title}
-                formatter={() => audit.displayValue || `${audit.numericValue} ${audit.numericUnit}`}
-              />
-              <Progress
-                showInfo={false}
-                percent={audit.score * 100}
-                status={isSame ? 'normal' : isUp ? 'success' : 'exception'}
-              />
-            </Card.Grid>
+            <Col xl={6} md={4} sm={2} xs={1}>
+              <Card hoverable={true} bordered={false}>
+                <Descriptions title={audit.title} column={2} size='small'>
+                  <Descriptions.Item label={<Text type='secondary'>A</Text>}>
+                    {audit.displayValue || toFixed(audit.numericValue)}
+                  </Descriptions.Item>
+                  <Descriptions.Item label={<Text type='secondary'>B</Text>}>
+                    {audit.bAudit.displayValue || toFixed(audit.bAudit.numericValue)}
+                  </Descriptions.Item>
+                </Descriptions>
+
+                <Statistic
+                  prefix={
+                    <Text type={status}>{isSame ? undefined : isUp ? <ArrowUpOutlined /> : <ArrowDownOutlined />}</Text>
+                  }
+                  formatter={() => <Text type={status}>{gap}</Text>}
+                  suffix={<Text type={status}>{audit.numericUnit}</Text>}
+                />
+
+                <Progress
+                  showInfo={false}
+                  percent={isUp ? audit.score * 100 : audit.bAudit.score * 100}
+                  strokeLinecap='square'
+                  success={{ percent: isUp ? audit.bAudit.score * 100 : audit.score * 100, strokeColor: '#00000073' }}
+                  status={isSame ? 'normal' : isUp ? 'success' : 'exception'}
+                />
+              </Card>
+            </Col>
           )
         })}
-      </Card>
+      </Row>
     </>
   )
 }
