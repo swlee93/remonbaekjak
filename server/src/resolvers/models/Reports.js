@@ -2,35 +2,6 @@ const { TASK_TYPE, FILEDB_PATH } = require('../../constants')
 const { getTargetFileList } = require('../resolveUtils')
 const fse = require('fs-extra')
 
-const ensureJson = (data) => {
-  if (typeof data === 'string') {
-    try {
-      return JSON.parse(data)
-    } catch (erro) {
-      return {}
-    }
-  }
-  return data
-}
-
-const getLightHouseReportAuditSummary = (original = {}, score = 0) => {
-  const data = ensureJson(original)
-  const { audits } = data
-
-  let summary = { audits: {}, score }
-  if (audits) {
-    Object.entries(audits).forEach(
-      ([key, { title, score, numericValue, numericUnit, displayValue, scoreDisplayMode }]) => {
-        if (scoreDisplayMode === 'numeric') {
-          summary.audits[key] = { title, score, numericValue, numericUnit, displayValue }
-        }
-      },
-    )
-  }
-
-  return summary
-}
-
 const getReportInfoByTimestamp = async (parent, args, context, info) => {
   const { taskType, timestamp: argTimestamp, taskId: argTaskId } = args
   const { taskManager } = context
@@ -52,26 +23,37 @@ const getReportInfoByTimestamp = async (parent, args, context, info) => {
   }
 }
 
-const getReportInfo = async (parent, args, context, info) => {
-  const { taskType, stime = Date.now() - 86400000, etime = Date.now() } = args
+const getReportInfos = async (parent, args, context, info) => {
+  const now = Date.now()
+  const { taskType, stime = now - 86400000, etime = now, first = 5, after = 0 } = args
 
   switch (taskType) {
     case TASK_TYPE.LIGHTHOUSE:
     default:
       const { taskManager } = context
-      const files = getTargetFileList(FILEDB_PATH.REPORT_SUMMARY, undefined, 'json')
+      const list = getTargetFileList(FILEDB_PATH.REPORT_INDEX, undefined, 'json', {
+        stime,
+        etime,
+        reverse: true,
+      })
+      const index = after ? list.findIndex((item) => item.timestamp === after) : 0
+      console.log('list', list, after, index)
+      const offset = index + 1
+      const files = list.slice(offset, offset + first)
+      const last = files[files.length - 1]
 
-      return await files.reduce((acc, { path, name, timestamp, taskId }) => {
-        if (stime < timestamp && etime > timestamp) {
+      return {
+        pageInfo: {
+          endCursor: last.timestamp,
+          hasNextPage: offset + first < list.length,
+        },
+        edges: await files.map(({ path, timestamp, taskId }) => {
           const task = taskManager.getTaskBy({ taskId })
           const data = fse.readJsonSync(path) || {}
-          // push
-          acc.push({ task, timestamp, data })
-        }
-
-        return acc
-      }, [])
+          return { cursor: timestamp, node: { task, timestamp, data } }
+        }),
+      }
   }
 }
 
-module.exports = { getReportInfo, getReportInfoByTimestamp, getLightHouseReportAuditSummary }
+module.exports = { getReportInfos, getReportInfoByTimestamp }

@@ -1,7 +1,7 @@
 type Query {
   getTasks: [Task]
   getLightHouseData(taskId: ID, subtype: String, stime: Float, etime: Float, includeColumns: String): LightHouseData
-  getReportInfo(taskType: TaskType, stime: Float, etime: Float): [LightHouseReportData]
+  getReportInfos(taskType: TaskType, stime: Float, etime: Float, first: Int, after: Float): ReportInfoResponse
   getReportInfoByTimestamp(taskType: TaskType, timestamp: Float): LightHouseReportData
   getSettings: Settings
 }
@@ -9,6 +9,26 @@ type Query {
 type Mutation {
   createTask(name: String!, description: String, type: TaskType): Task
   updateSettings(settingsInput: SettingsInput): Settings
+}
+
+type Subscription {
+  createSprint: Sprint
+  registObserver: Observer
+}
+
+type ReportInfoEdge {
+  cursor: String
+  node: LightHouseReportData
+}
+
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean
+}
+
+type ReportInfoResponse {
+  edges: [ReportInfoEdge]
+  pageInfo: PageInfo
 }
 
 type LightHouseReportData {
@@ -23,10 +43,6 @@ extend type LightHouseReportData {
 type LightHouseData {
   report: [LightHouseReportData]
   performance: [JSON]
-}
-type Subscription {
-  createSprint: Sprint
-  registObserver: Observer
 }
 
 type Task {

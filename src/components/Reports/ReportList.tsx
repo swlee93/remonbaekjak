@@ -1,19 +1,13 @@
-import { ReactNode, useMemo, useState } from 'react'
-import {
-  CheckOutlined,
-  EllipsisOutlined,
-  ExpandOutlined,
-  MoreOutlined,
-  ShrinkOutlined,
-  SplitCellsOutlined,
-} from '@ant-design/icons'
-import { Button, Divider, Drawer, List, Progress, Radio, Space, Checkbox } from 'antd'
+import { useEffect, useMemo, useState } from 'react'
+import { CheckOutlined, ExpandOutlined, ShrinkOutlined } from '@ant-design/icons'
+import { Button, Divider, Drawer, List, Progress, Space, Spin } from 'antd'
 
 import { UseQuery, UseQueryProps } from 'utils/fetches'
 import ReportInfo from './ReportInfo'
 import Text from 'antd/lib/typography/Text'
 import ButtonGroup from 'antd/lib/button/button-group'
 import { VIEW_MODE } from './Reports'
+import InfiniteScroll from 'react-infinite-scroller'
 
 interface ReportListInterface {
   viewMode?: VIEW_MODE
@@ -31,21 +25,27 @@ interface ReportInfoData {
     score: number
   }
 }
-
+export enum REPORT_INFO_TAB {
+  'REPORT' = 'REPORT',
+  'SCORES' = 'SCORES',
+}
 const ReportList = ({
   data,
   loading,
+  setOptions,
+  refetch,
+  stime,
+  etime,
   viewMode,
   onChangeCompare,
   compareA,
   compareB,
 }: UseQueryProps<ReportListInterface>) => {
-  const reports = useMemo(() => data?.getReportInfo || [], [data])
+  const { pageInfo = {}, edges = [] } = useMemo<any>(() => data?.getReportInfos || {}, [data])
 
   const [reportInfo, setReportInfo] = useState<ReportInfoData>()
-  const [reportInfoTabKey, setReportInfoTabKey] = useState<'report' | 'scores'>('report')
+  const [reportInfoTabKey, setReportInfoTabKey] = useState<REPORT_INFO_TAB>(REPORT_INFO_TAB.REPORT)
   const [showReportInfo, setShowReportInfo] = useState<boolean>(false)
-
   const [isExpand, setExpand] = useState(false)
   const onClickListItem = (info: ReportInfoData) => {
     switch (viewMode) {
@@ -71,49 +71,70 @@ const ReportList = ({
         setShowReportInfo(true)
     }
   }
+
+  const [dataSource, setDataSource] = useState<any>(edges)
+  useEffect(() => {
+    setDataSource([].concat(dataSource, edges))
+  }, [pageInfo.endCursor])
+
+  const handleInfiniteOnLoad = async () => {
+    if (pageInfo.hasNextPage) {
+      await setOptions({ variables: { after: Number(pageInfo.endCursor), stime, etime } })
+      await refetch()
+    }
+  }
+
   return (
-    <>
-      <List
-        loading={loading}
-        grid={{ gutter: 16, xl: 6, md: 4, sm: 2, xs: 1 }}
-        split={false}
-        dataSource={reports}
-        renderItem={(info: ReportInfoData) => {
-          const score = info?.data?.score
-          const task = info.task || {}
-          const timestamp = new Date(info.timestamp).toLocaleString()
-          const isCompareA = compareA?.timestamp === info?.timestamp
-          const isCompareB = compareB?.timestamp === info?.timestamp
-          return (
-            <List.Item
-              onClick={() => onClickListItem(info)}
-              key={task.id}
-              extra={
-                viewMode === VIEW_MODE.COMPARE ? (
-                  <Button
-                    type={isCompareA || isCompareB ? 'primary' : 'dashed'}
-                    icon={<CheckOutlined />}
-                    children={isCompareA ? 'A' : isCompareB ? 'B' : ''}
-                  />
-                ) : undefined
-              }
-            >
-              <List.Item.Meta
-                avatar={
-                  <Progress
-                    width={48}
-                    type='circle'
-                    percent={score}
-                    format={score === 100 ? undefined : () => Number(score.toFixed(2))}
-                  />
+    <div style={{ maxHeight: 200, overflow: 'auto' }}>
+      <InfiniteScroll
+        initialLoad={false}
+        pageStart={0}
+        loadMore={handleInfiniteOnLoad}
+        hasMore={!loading && pageInfo.hasNextPage}
+        useWindow={false}
+      >
+        <List
+          loading={loading}
+          split={false}
+          dataSource={dataSource}
+          renderItem={(item: any) => {
+            const info = item.node
+            const score = info?.data?.score
+            const task = info.task || {}
+            const timestamp = new Date(info.timestamp).toLocaleString()
+            const isCompareA = compareA?.timestamp === info?.timestamp
+            const isCompareB = compareB?.timestamp === info?.timestamp
+            return (
+              <List.Item
+                key={item.cursor}
+                onClick={() => onClickListItem(item.node)}
+                extra={
+                  viewMode === VIEW_MODE.COMPARE ? (
+                    <Button
+                      type={isCompareA || isCompareB ? 'primary' : 'dashed'}
+                      icon={<CheckOutlined />}
+                      children={isCompareA ? 'A' : isCompareB ? 'B' : ''}
+                    />
+                  ) : undefined
                 }
-                title={task.name}
-                description={timestamp}
-              />
-            </List.Item>
-          )
-        }}
-      />
+              >
+                <List.Item.Meta
+                  avatar={
+                    <Progress
+                      width={48}
+                      type='circle'
+                      percent={score}
+                      format={score === 100 ? undefined : () => Number(score.toFixed(2))}
+                    />
+                  }
+                  title={task.name}
+                  description={timestamp}
+                />
+              </List.Item>
+            )
+          }}
+        />
+      </InfiniteScroll>
       <Drawer
         height={isExpand ? '100vh' : '50vh'}
         mask={false}
@@ -136,18 +157,27 @@ const ReportList = ({
           onChangeTabKey={setReportInfoTabKey}
         />
       </Drawer>
-    </>
+    </div>
   )
 }
 export default UseQuery(ReportList)`
-query GetReportInfo($taskType: TaskType, $stime: Float, $etime: Float) {
-    getReportInfo(taskType: $taskType, stime: $stime, etime: $etime) {
+query GetReportInfos($taskType: TaskType, $stime: Float, $etime: Float, $after: Float) {
+  getReportInfos(taskType: $taskType, stime: $stime, etime: $etime, first: 5, after: $after) {
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+    edges {
+      cursor
+      node {
         task {
-            id
-            name
+          id
+          name
         }
         timestamp
-        data
+        data 
+      }
     }
+  }
 }
 `

@@ -1,6 +1,6 @@
 const FILEDB_PATH = {
   REPORT: 'filedb/lighthouse/report',
-  REPORT_SUMMARY: 'filedb/lighthouse/reportsummary',
+  REPORT_INDEX: 'filedb/lighthouse/index/report',
   METRICS: 'filedb/lighthouse/performance',
 }
 

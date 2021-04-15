@@ -23,6 +23,6 @@
 const { getTasks } = require('./models/Task')
 const { getLightHouseData } = require('./models/LightHouseData')
 const { getSettings } = require('./models/Settings')
-const { getReportInfo, getReportInfoByTimestamp } = require('./models/Reports')
+const { getReportInfos, getReportInfoByTimestamp } = require('./models/Reports')
 
-module.exports = { getTasks, getLightHouseData, getSettings, getReportInfo, getReportInfoByTimestamp }
+module.exports = { getTasks, getLightHouseData, getSettings, getReportInfos, getReportInfoByTimestamp }

@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 import { UseQuery, UseQueryProps } from 'utils/fetches'
 /**@ts-ignore */
 import ReportViewer from 'react-lighthouse-viewer'
+import { REPORT_INFO_TAB } from './ReportList'
 
 interface ReportInfoData {
   timestamp: number
@@ -16,7 +17,7 @@ interface ReportInfoData {
   }
 }
 interface ReportInfoInterface {
-  activeTabKey: 'report' | 'scores'
+  activeTabKey: REPORT_INFO_TAB
   onChangeTabKey: (activeKey: string) => void
 }
 
@@ -29,10 +30,10 @@ const ReportInfo = ({ data, activeTabKey, onChangeTabKey }: UseQueryProps<Report
 
   return (
     <Tabs defaultActiveKey={activeTabKey} tabPosition='left' onChange={onChangeTabKey}>
-      <Tabs.TabPane key='report' tab='Report'>
+      <Tabs.TabPane key={REPORT_INFO_TAB.REPORT} tab='Report'>
         {!!report?.data && <ReportViewer json={report?.data} />}
       </Tabs.TabPane>
-      <Tabs.TabPane key='scores' tab='Scores'>
+      <Tabs.TabPane key={REPORT_INFO_TAB.SCORES} tab='Scores'>
         <Descriptions colon={false}>
           {numericAudits.map((audit) => (
             <Descriptions.Item
