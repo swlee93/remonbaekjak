@@ -25,13 +25,13 @@ const getReportInfoByTimestamp = async (parent, args, context, info) => {
 
 const getReportInfos = async (parent, args, context, info) => {
   const now = Date.now()
-  const { taskType, stime = now - 86400000, etime = now, first = 5, after = 0 } = args
+  const { taskType, taskId, stime = now - 86400000, etime = now, first = 5, after = 0 } = args
 
   switch (taskType) {
     case TASK_TYPE.LIGHTHOUSE:
     default:
       const { taskManager } = context
-      const list = getTargetFileList(FILEDB_PATH.REPORT_INDEX, undefined, 'json', {
+      const list = getTargetFileList(FILEDB_PATH.REPORT_INDEX, taskId, 'json', {
         stime,
         etime,
         reverse: true,
@@ -47,8 +47,8 @@ const getReportInfos = async (parent, args, context, info) => {
           endCursor: last.timestamp,
           hasNextPage: offset + first < list.length,
         },
-        edges: await files.map(({ path, timestamp, taskId }) => {
-          const task = taskManager.getTaskBy({ taskId })
+        edges: await files.map(({ path, timestamp, taskId: tId }) => {
+          const task = taskManager.getTaskBy({ taskId: tId })
           const data = fse.readJsonSync(path) || {}
           return { cursor: timestamp, node: { task, timestamp, data } }
         }),

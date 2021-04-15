@@ -1,7 +1,7 @@
 type Query {
   getTasks: [Task]
   getLightHouseData(taskId: ID, subtype: String, stime: Float, etime: Float, includeColumns: String): LightHouseData
-  getReportInfos(taskType: TaskType, stime: Float, etime: Float, first: Int, after: Float): ReportInfoResponse
+  getReportInfos(taskType: TaskType, taskId: ID, stime: Float, etime: Float, first: Int, after: Float): ReportInfoResponse
   getReportInfoByTimestamp(taskType: TaskType, timestamp: Float): LightHouseReportData
   getSettings: Settings
 }

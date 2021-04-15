@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { UseQuery, UseQueryProps } from 'utils/fetches'
 /**@ts-ignore */
 import ReportViewer from 'react-lighthouse-viewer'
-import { REPORT_INFO_TAB } from './ReportList'
+import { REPORT_INFO_TAB } from './ReportInfoDrawer'
 
 interface ReportInfoData {
   timestamp: number

@@ -1,15 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
-import { CheckOutlined, ExpandOutlined, ShrinkOutlined } from '@ant-design/icons'
-import { Button, Divider, Drawer, List, Progress, Space, Spin } from 'antd'
+import { CheckOutlined } from '@ant-design/icons'
+import { Button, List, Progress } from 'antd'
 
 import { UseQuery, UseQueryProps } from 'utils/fetches'
-import ReportInfo from './ReportInfo'
-import Text from 'antd/lib/typography/Text'
-import ButtonGroup from 'antd/lib/button/button-group'
 
 import InfiniteScroll from 'react-infinite-scroller'
 import { InfiniteScrollWrapper } from 'styles/LayoutStyles'
 import { VIEW_MODE } from './ReportOptionProvider'
+
 interface ReportListInterface {
   viewMode?: VIEW_MODE
   onChangeCompare?: (target: 'A' | 'B', reportInfo: any | undefined) => void
@@ -26,10 +24,7 @@ interface ReportInfoData {
     score: number
   }
 }
-export enum REPORT_INFO_TAB {
-  'REPORT' = 'REPORT',
-  'SCORES' = 'SCORES',
-}
+
 const ReportList = ({
   data,
   loading,
@@ -58,7 +53,7 @@ const ReportList = ({
 
   return (
     <>
-      <InfiniteScrollWrapper height={'calc(100% - 100px)'} hasNextPage={pageInfo.hasNextPage}>
+      <InfiniteScrollWrapper height={'100%'} hasNextPage={pageInfo.hasNextPage}>
         <InfiniteScroll
           initialLoad={false}
           pageStart={0}
@@ -113,8 +108,8 @@ const ReportList = ({
   )
 }
 export default UseQuery(ReportList)`
-query GetReportInfos($taskType: TaskType, $stime: Float, $etime: Float, $after: Float) {
-  getReportInfos(taskType: $taskType, stime: $stime, etime: $etime, first: 20, after: $after) {
+query GetReportInfos($taskType: TaskType, $taskId: ID, $stime: Float, $etime: Float, $after: Float) {
+  getReportInfos(taskType: $taskType, taskId: $taskId, stime: $stime, etime: $etime, first: 20, after: $after) {
     pageInfo {
       endCursor
       hasNextPage

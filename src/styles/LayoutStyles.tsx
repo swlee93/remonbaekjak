@@ -1,6 +1,6 @@
 import React from 'react'
 import styled, { CSSProperties, Interpolation, ThemedStyledProps } from 'styled-components'
-import { Layout, Typography } from 'antd'
+import { Card, Layout, Typography } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons'
 const { Text } = Typography
 const { Sider, Header, Content } = Layout
@@ -53,6 +53,7 @@ export const StyledContent = styled(Content)<{ gap?: string }>`
   ${({ gap }) => gap && `padding: ${gap}; gap: ${gap};`};
   flex-flow: column;
   height: 100%;
+  width: 100%;
   & ${StyledContentInner} {
     overflow: auto;
   }
@@ -106,4 +107,24 @@ export const InfiniteScrollWrapper = ({
       </div>
     </div>
   )
+}
+
+export const HorizontalScrollItem = styled(Card).attrs({
+  size: 'small',
+  bodyStyle: { height: '-webkit-fill-available' },
+})`
+  overflow: auto;
+`
+const HorizontalScrollContainer = styled.div`
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  width: 100%;
+  max-width: 100vw;
+  height: 100%;
+  gap: 20px;
+`
+
+export const HorizontalScroll = ({ children }: { children: React.ReactNode }) => {
+  return <HorizontalScrollContainer>{children}</HorizontalScrollContainer>
 }
