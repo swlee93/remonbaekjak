@@ -59,7 +59,7 @@ export const StyledContent = styled(Content)<{ gap?: string }>`
 `
 
 export const InfiniteScrollListWrapper = styled.div<{ hasNextPage?: boolean }>`
-  height: 300px;
+  height: 100%;
   overflow: auto;
   width: 100%;
   border-bottom: ${({ hasNextPage }) => (hasNextPage ? `unset` : 'solid 1px')};
@@ -71,6 +71,7 @@ export const InfiniteScrollLoadingWrapper = styled.div`
   text-align: center;
 `
 interface InfiniteScrollWrapperProps {
+  height?: string
   hasNextPage?: boolean
   children: React.ReactNode
   total?: number
@@ -86,10 +87,11 @@ export const InfiniteScrollWrapper = ({
   total,
   error,
   loading,
+  height = '300px',
 }: InfiniteScrollWrapperProps) => {
   const showLabel = !!total && !!count
   return (
-    <div style={{ width: '100%' }}>
+    <div style={{ width: '100%', height }}>
       <InfiniteScrollListWrapper hasNextPage={hasNextPage}>{children}</InfiniteScrollListWrapper>
       <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', alignItems: 'center' }}>
         {!!error && <Text type='danger'>{error}</Text>}
