@@ -37,7 +37,6 @@ const getReportInfos = async (parent, args, context, info) => {
         reverse: true,
       })
       const index = after ? list.findIndex((item) => item.timestamp === after) : 0
-      console.log('list', list, after, index)
       const offset = index + 1
       const files = list.slice(offset, offset + first)
       const last = files[files.length - 1]

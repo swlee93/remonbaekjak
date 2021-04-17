@@ -36,6 +36,7 @@ const ReportList = ({
   onClickListItem,
   compareA,
   compareB,
+  error,
 }: UseQueryProps<ReportListInterface>) => {
   const { pageInfo = {}, edges = [] } = useMemo<any>(() => data?.getReportInfos || {}, [data])
 
@@ -53,7 +54,7 @@ const ReportList = ({
 
   return (
     <>
-      <InfiniteScrollWrapper height={'100%'} hasNextPage={pageInfo.hasNextPage}>
+      <InfiniteScrollWrapper height={'100%'} hasNextPage={pageInfo.hasNextPage} errorMessage={error?.message}>
         <InfiniteScroll
           initialLoad={false}
           pageStart={0}

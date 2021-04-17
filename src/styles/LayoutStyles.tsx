@@ -77,7 +77,7 @@ interface InfiniteScrollWrapperProps {
   children: React.ReactNode
   total?: number
   count?: number
-  error?: string
+  errorMessage?: string
   loading?: boolean
 }
 
@@ -86,16 +86,17 @@ export const InfiniteScrollWrapper = ({
   hasNextPage,
   count,
   total,
-  error,
+  errorMessage,
   loading,
   height = '300px',
 }: InfiniteScrollWrapperProps) => {
   const showLabel = !!total && !!count
+
   return (
     <div style={{ width: '100%', height }}>
       <InfiniteScrollListWrapper hasNextPage={hasNextPage}>{children}</InfiniteScrollListWrapper>
       <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', alignItems: 'center' }}>
-        {!!error && <Text type='danger'>{error}</Text>}
+        {!!errorMessage && <Text type='danger'>{errorMessage}</Text>}
         {!!loading && <LoadingOutlined />}
         {showLabel && (
           <>

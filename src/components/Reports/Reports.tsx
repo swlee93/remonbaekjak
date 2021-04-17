@@ -12,7 +12,7 @@ import { UseQuery, UseQueryProps } from 'utils/fetches'
 const Reports = ({ data }: UseQueryProps<any>) => {
   const [time, setTime] = useState<Time>({ stime: undefined, etime: undefined })
   const tasks = useMemo<any[]>(() => data?.getTasks, [data])
-  console.log('tasks', tasks)
+
   return (
     <>
       <HeaderPlace>
@@ -26,12 +26,7 @@ const Reports = ({ data }: UseQueryProps<any>) => {
             <>
               <HorizontalScroll>
                 {tasks?.map((task) => (
-                  <HorizontalScrollItem
-                    style={{ width: '300px', minWidth: '300px' }}
-                    key={task?.id}
-                    title={task?.name}
-                    extra={new Date(task?.createdAt).toLocaleString()}
-                  >
+                  <HorizontalScrollItem style={{ width: '300px', minWidth: '300px' }} key={task?.id} title={task?.name}>
                     <ReportList
                       viewMode={viewMode}
                       taskId={task?.id}

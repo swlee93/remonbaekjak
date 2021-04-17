@@ -84,7 +84,7 @@ const OptionListRenderer = ({ repositories, value, setValue, setOptions, dataSou
 
   const handleInfiniteOnLoad = () => {
     if (totalCount && totalCount > dataSource.length) {
-      setOptions({ variables: { endCursor } })
+      setOptions({ endCursor })
     }
   }
   const onCheckRepositories = (v: string) => {
@@ -105,7 +105,7 @@ const OptionListRenderer = ({ repositories, value, setValue, setOptions, dataSou
       hasNextPage={hasNextPage}
       count={dataSource.length}
       total={totalCount}
-      error={error?.name}
+      errorMessage={error?.message}
       loading={loading}
     >
       <InfiniteScroll
