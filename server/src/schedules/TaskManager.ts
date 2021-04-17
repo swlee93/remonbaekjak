@@ -1,4 +1,4 @@
-const cron = require('node-cron')
+import cron from 'node-cron'
 
 class TaskManager {
   tasks = { data: [], timestamp: Date.now() }
@@ -17,16 +17,20 @@ class TaskManager {
     this.db = prisma.task
     this.collector = collector
 
-    this.schedule = cron.schedule('*/5 * * * * *', async () => {
-      await this.db
-        .findMany()
-        .then((result) => {
-          this.setTasks(result)
-        })
-        .catch((error) => {
-          console.error(error)
-        })
-    })
+    this.schedule = cron.schedule(
+      '*/5 * * * * *',
+      async () => {
+        await this.db
+          .findMany()
+          .then((result) => {
+            this.setTasks(result)
+          })
+          .catch((error) => {
+            console.error(error)
+          })
+      },
+      {},
+    )
   }
 
   getTasks = () => this.tasks
@@ -43,7 +47,7 @@ class TaskManager {
     this.state.done = { task: done, endedAt: now }
     this.state.doing = { task: newTask, startedAt: now }
     this.state.waits = this.tasks.data.filter((tsk) => tsk.id !== newTask.id)
-    console.log('[TaskManager] getTasks', this.getState())
+    // console.log('[TaskManager] getTasks', this.getState())
   }
 
   getState = () => this.state
@@ -65,10 +69,14 @@ class TaskManager {
         await turn
         const { type } = task
         const Collector = collector[type]
-
-        const runner = new Collector({ task })
-        setState(task)
-        return runner.do()
+        if (Collector) {
+          const runner = new Collector({ task })
+          setState(task)
+          return runner.do()
+        } else {
+          //
+          return
+        }
       }, Promise.resolve())
     })(this)
 
@@ -79,7 +87,7 @@ class TaskManager {
 }
 
 let instance
-module.exports = {
+export default {
   createInstance: (props) => {
     if (!instance && props.prisma) {
       instance = new TaskManager(props)
@@ -92,7 +100,7 @@ module.exports = {
     instance.run()
     return instance
   },
-  getInstance: (props) => {
+  getInstance: () => {
     return instance
   },
 }

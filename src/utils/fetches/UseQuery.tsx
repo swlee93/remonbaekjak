@@ -35,6 +35,7 @@ const UseQueryComponent = ({ children, query, ownProps = {} }: UseQueryComponent
     context: ownProps,
     variables: getVariablesFromMatchProps(query, ownProps),
   })
+
   useEffect(() => {
     const variables = getVariablesFromMatchProps(query, ownProps)
     setOptions({ ...options, variables })

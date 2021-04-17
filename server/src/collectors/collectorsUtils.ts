@@ -1,4 +1,4 @@
-const shortid = require('shortid')
+import shortid from 'shortid'
 
 const ensureJson = (data) => {
   if (typeof data === 'string') {
@@ -18,7 +18,7 @@ const getLightHouseReportIndexData = (original = {}, score = 0) => {
   let summary = { audits: {}, score, _id_: shortid.generate() }
   if (audits) {
     Object.entries(audits).forEach(
-      ([key, { title, score, numericValue, numericUnit, displayValue, scoreDisplayMode }]) => {
+      ([key, { title, score, numericValue, numericUnit, displayValue, scoreDisplayMode }]: any) => {
         if (scoreDisplayMode === 'numeric') {
           summary.audits[key] = { title, score, numericValue, numericUnit, displayValue }
         }
@@ -29,4 +29,4 @@ const getLightHouseReportIndexData = (original = {}, score = 0) => {
   return summary
 }
 
-module.exports = { getLightHouseReportIndexData }
+export { getLightHouseReportIndexData }

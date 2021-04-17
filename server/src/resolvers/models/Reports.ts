@@ -1,6 +1,6 @@
-const { TASK_TYPE, FILEDB_PATH } = require('../../constants')
-const { getTargetFileList } = require('../resolveUtils')
-const fse = require('fs-extra')
+import { TASK_TYPE, FILEDB_PATH } from '../../constants'
+import { getTargetFileList } from '../resolveUtils'
+import fse from 'fs-extra'
 
 const getReportInfoByTimestamp = async (parent, args, context, info) => {
   const { taskType, timestamp: argTimestamp, taskId: argTaskId } = args
@@ -11,7 +11,7 @@ const getReportInfoByTimestamp = async (parent, args, context, info) => {
     default:
       const files = getTargetFileList(FILEDB_PATH.REPORT, argTaskId, 'json')
 
-      return await files.reduce((acc, { path, name, timestamp, taskId }) => {
+      return await files.reduce((acc, { path, name, timestamp, taskId } = {}) => {
         if (timestamp === argTimestamp && !acc.timestamp) {
           const task = taskManager.getTaskBy({ taskId })
           const data = fse.readJsonSync(path) || {}
@@ -55,4 +55,4 @@ const getReportInfos = async (parent, args, context, info) => {
   }
 }
 
-module.exports = { getReportInfos, getReportInfoByTimestamp }
+export { getReportInfos, getReportInfoByTimestamp }

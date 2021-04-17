@@ -19,4 +19,4 @@ async function createTask(parent, args, context, info) {
   return created
 }
 
-module.exports = { getTasks, createTask }
+export  { getTasks, createTask }

@@ -1,7 +1,6 @@
-const fse = require('fs-extra')
-const csv = require('csvtojson')
+import fse from 'fs-extra'
 
-const getTargetFileList = (root, taskId, extention, option = {}) => {
+const getTargetFileList = (root, taskId, extention, option: any = {}) => {
   let files = []
   if (taskId) {
     const path = `${root}/${taskId}`
@@ -37,17 +36,15 @@ const getTargetFileList = (root, taskId, extention, option = {}) => {
   }
 
   // options
-  if (option.stime && option.etime) {
+  if (option?.stime && option?.etime) {
     files = files.filter(({ timestamp }) => option.stime < timestamp && option.etime > timestamp)
   }
 
-  if (option.reverse) {
+  if (option?.reverse) {
     files.reverse()
   }
 
   return files
 }
 
-module.exports = {
-  getTargetFileList,
-}
+export { getTargetFileList }

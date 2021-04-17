@@ -1,10 +1,11 @@
-const { sleep } = require('../utils')
-const { FILEDB_PATH } = require('../constants')
-const fse = require('fs-extra')
+import { sleep } from '../utils'
+import { FILEDB_PATH } from '../constants'
+import fse from 'fs-extra'
 
-const lighthouse = require('lighthouse')
+import lighthouse from 'lighthouse'
 const chromeLauncher = require('chrome-launcher')
-const { getLightHouseReportIndexData } = require('./collectorsUtils')
+
+import { getLightHouseReportIndexData } from './collectorsUtils'
 
 class LightHouse {
   task
@@ -13,6 +14,10 @@ class LightHouse {
   }
   do = async () => {
     await (async () => {
+      if (!chromeLauncher) {
+        console.log('not launched')
+        return
+      }
       const chrome = await chromeLauncher.launch({ chromeFlags: ['--headless'] })
       const options = { logLevel: 'info', output: 'json', onlyCategories: ['performance'], port: chrome.port }
 
@@ -67,8 +72,8 @@ class LightHouse {
     })()
     await sleep(() => {
       console.log('LightHouse.done', this.task.id, Date.now())
-    }, process.env.LIGHTHOUSE_SLEEP_INTERVAL_BETWEEN_TASK)
+    }, Number(process.env.LIGHTHOUSE_SLEEP_INTERVAL_BETWEEN_TASK))
   }
 }
 
-module.exports = LightHouse
+export default LightHouse

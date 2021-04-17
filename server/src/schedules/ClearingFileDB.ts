@@ -1,8 +1,9 @@
-const cron = require('node-cron')
-const TaskManager = require('./TaskManager')
-const fse = require('fs-extra')
+import cron from 'node-cron'
+import TaskManager from './TaskManager'
+import fse from 'fs-extra'
 
 const FILEDB_PATH = 'filedb'
+
 const getLightHousePathBy = (taskSubType, taskId) => [FILEDB_PATH, 'lighthouse', taskSubType, taskId].join('/')
 
 class ClearingFileDB {
@@ -26,27 +27,31 @@ class ClearingFileDB {
   }
   constructor() {
     this.taskManager = TaskManager.getInstance()
-    this.schedule = cron.schedule('*/5 * * * * *', async () => {
-      const tasks = this.taskManager.getTasks()
-      const expire = Date.now() - parseInt(process.env.DEFAULT_EXPIRE)
-      tasks.data.forEach((task) => {
-        this.remove('performance', task.id, expire)
-        this.remove('report', task.id, expire)
-      })
-    })
+    this.schedule = cron.schedule(
+      '*/5 * * * * *',
+      async () => {
+        const tasks = this.taskManager.getTasks()
+        const expire = Date.now() - parseInt(process.env.DEFAULT_EXPIRE)
+        tasks.data.forEach((task) => {
+          this.remove('performance', task.id, expire)
+          this.remove('report', task.id, expire)
+        })
+      },
+      {},
+    )
   }
 }
 
 let instance
-module.exports = {
-  createInstance: (props) => {
+export default {
+  createInstance: () => {
     if (!instance) {
-      instance = new ClearingFileDB(props)
+      instance = new ClearingFileDB()
       Object.freeze(instance)
     }
     return instance
   },
-  getInstance: (props) => {
+  getInstance: () => {
     return instance
   },
 }

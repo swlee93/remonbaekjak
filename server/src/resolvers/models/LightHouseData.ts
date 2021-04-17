@@ -1,7 +1,7 @@
-const fse = require('fs-extra')
-const csv = require('csvtojson')
-const { getTargetFileList } = require('../resolveUtils')
-const { FILEDB_PATH, TASK_DATATYPE } = require('../../constants')
+import fse from 'fs-extra'
+import csv from 'csvtojson'
+import { getTargetFileList } from '../resolveUtils'
+import { FILEDB_PATH, TASK_DATATYPE } from '../../constants'
 
 const readLightHouseReportData = async (taskId, stime = Date.now() - 86400000, etime = Date.now()) => {
   let files = getTargetFileList(FILEDB_PATH.REPORT, taskId, 'json')
@@ -60,4 +60,4 @@ const getLightHouseData = (parent, args, context, info) => {
   }
 }
 
-module.exports = { getLightHouseData }
+export { getLightHouseData }

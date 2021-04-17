@@ -16,7 +16,4 @@ const registObserver = {
   },
 }
 
-module.exports = {
-  createSprint,
-  registObserver,
-}
+export default { createSprint, registObserver }

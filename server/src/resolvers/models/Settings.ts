@@ -1,4 +1,4 @@
-const parseSettings = async (original = {}) => {
+const parseSettings = async (original: any = {}) => {
   let github_repositories = []
 
   if (original.github_repositories) {
@@ -30,4 +30,4 @@ async function updateSettings(parent, args, context) {
     .then(parseSettings)
 }
 
-module.exports = { getSettings, updateSettings }
+export { getSettings, updateSettings }

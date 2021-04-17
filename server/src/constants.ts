@@ -13,4 +13,4 @@ const TASK_DATATYPE = {
   performance: 'performance',
 }
 
-module.exports = { FILEDB_PATH, TASK_TYPE, TASK_DATATYPE }
+export { FILEDB_PATH, TASK_TYPE, TASK_DATATYPE }
