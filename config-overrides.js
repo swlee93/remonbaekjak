@@ -1,8 +1,8 @@
-import darkTheme from '@ant-design/dark-theme'
-import { addWebpackAlias, override, fixBabelImports, addLessLoader } from 'customize-cra'
-import path from 'path'
+const darkTheme = require('@ant-design/dark-theme')
+const { addWebpackAlias, override, fixBabelImports, addLessLoader } = require('customize-cra')
+const path = require('path')
 
-export default override(
+module.exports = override(
   addWebpackAlias({
     components: path.resolve(__dirname, 'src/components'),
     styles: path.resolve(__dirname, 'src/styles'),

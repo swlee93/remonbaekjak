@@ -59,7 +59,6 @@ export default UseQuery(Reports)`
       description,
       type,
       name,
-      createdBy,
       createdAt
     }
   }

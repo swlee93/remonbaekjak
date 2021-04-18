@@ -11,9 +11,9 @@ interface MenuContextProps {
 const MenuContext = createContext<MenuContextProps>({ refresh: () => window.open('/', '_self') })
 
 interface MenuHandlerProps {
-  onSelectMenu?: any
+  onSelectMenu: ({ uri }: Partial<MenuItemInterface>) => void
 }
-const MenuHandlerContext = createContext<MenuHandlerProps>({})
+const MenuHandlerContext = createContext<MenuHandlerProps>({ onSelectMenu: () => {} })
 
 interface MenuProviderInterface {
   children: JSX.Element
@@ -51,8 +51,9 @@ const MenuProvider = ({ children }: MenuProviderInterface) => {
     history.go(0)
   }
 
-  const onSelectMenu = ({ key }: any) => {
-    const selectedMenu = menu?.find(({ uri }) => key === uri)
+  const onSelectMenu = ({ uri }: Partial<MenuItemInterface>) => {
+    const selectedMenu = menu?.find((m) => uri === m?.uri)
+    console.log('selectedMenu', selectedMenu, menu, uri)
     if (selectedMenu) {
       setCurrentMenu(selectedMenu)
     }

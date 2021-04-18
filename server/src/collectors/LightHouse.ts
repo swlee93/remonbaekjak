@@ -19,7 +19,7 @@ class LightHouse {
         return
       }
       const chrome = await chromeLauncher.launch({ chromeFlags: ['--headless'] })
-      const options = { logLevel: 'info', output: 'json', onlyCategories: ['performance'], port: chrome.port }
+      const options = { logLevel: '', output: 'json', onlyCategories: ['performance'], port: chrome.port }
 
       // 원본 데이터
       const runnerResult = await lighthouse(this.task.name || 'https://example.com', options)

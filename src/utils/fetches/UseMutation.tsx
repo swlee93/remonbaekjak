@@ -15,6 +15,7 @@ type UseMutationProps<T> = {
   data: any
   setOptions: (options: OperationVariables) => void
   onSubmit: Function
+  completed: any
   [key: string]: any
 } & T
 
@@ -27,15 +28,27 @@ const UseMutationContext = createContext<UseMutationProps<any>>({
   called: undefined,
   setOptions: () => {},
   onSubmit: Function,
+  onCompleted: Promise,
 })
 
 const UseMutationComponent = ({ children, query, ownProps = {} }: UseMutationComponentProps) => {
   const [storage] = useState(new ClientStorage())
+
   const [QUERY_GENERATED] = useState(() => {
     return gql(query)
   })
+
   const [options, setOptions] = useState<OperationVariables>()
-  const [onMutation, { loading, error, data, called }] = useMutation(QUERY_GENERATED, options)
+  const [completed, setCompleted] = useState()
+  const onCompleted = (data: any) => {
+    setCompleted(data)
+  }
+
+  const [onMutation, { loading, error, data, called }] = useMutation(QUERY_GENERATED, {
+    ...(options || {}),
+    onCompleted,
+  })
+
   const onSubmit = async (variables: any) => {
     if (onMutation) {
       try {
@@ -56,6 +69,7 @@ const UseMutationComponent = ({ children, query, ownProps = {} }: UseMutationCom
       onSubmit(options)
     }
   }, [options])
+
   useEffect(() => {
     if (called) {
       let msg
@@ -75,8 +89,8 @@ const UseMutationComponent = ({ children, query, ownProps = {} }: UseMutationCom
   }, [loading, error, called])
 
   return (
-    <UseMutationContext.Provider value={{ loading, error, data, setOptions, onSubmit, called }}>
-      <>{children({ loading, error, data, setOptions, onSubmit, called, ...ownProps })}</>
+    <UseMutationContext.Provider value={{ loading, error, data, setOptions, onSubmit, called, completed }}>
+      <>{children({ loading, error, data, setOptions, onSubmit, called, completed, ...ownProps })}</>
     </UseMutationContext.Provider>
   )
 }

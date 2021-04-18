@@ -9,12 +9,6 @@ import { UseQuery, UseQueryProps } from 'utils/fetches'
 const DragHandle = SH(() => <MenuOutlined style={{ cursor: 'grab', color: '#999' }} />)
 
 const columns = [
-  // id,
-  // description,
-  // type,
-  // name,
-  // createdBy
-  // createdAt
   {
     title: 'Sort',
     dataIndex: 'sort',
@@ -33,7 +27,8 @@ const columns = [
   },
   {
     title: 'Created By',
-    dataIndex: 'createdBy',
+    dataIndex: 'user',
+    render: (user: any, record: any) => user?.email,
   },
   {
     title: 'Created At',
@@ -96,11 +91,14 @@ const TaskList = ({ data: _data_, loading, error }: UseQueryProps<any>) => {
 export default UseQuery(TaskList)`
   query {
     getTasks {
-      id,
-      description,
-      type,
-      name,
-      createdBy,
+      id
+      description
+      type
+      name
+      user {
+        name
+        email
+      }
       createdAt
     }
   }

@@ -8,15 +8,13 @@ const MenuItem = Menu.Item
 const Navigation = () => {
   const { menu, defaultMenu } = useContext(MenuContext)
   const { onSelectMenu } = useContext(MenuHandlerContext)
+  const onSelect = ({ key }: any) => {
+    onSelectMenu({ uri: key })
+  }
 
   if (!menu || !defaultMenu || !onSelectMenu) return <></>
   return (
-    <Menu
-      mode='inline'
-      defaultSelectedKeys={[defaultMenu?.uri]}
-      onSelect={onSelectMenu}
-      style={{ borderRight: 'unset' }}
-    >
+    <Menu mode='inline' defaultSelectedKeys={[defaultMenu?.uri]} onSelect={onSelect} style={{ borderRight: 'unset' }}>
       {menu.map(({ name, uri }: MenuItemInterface) => (
         <MenuItem key={uri}>{name}</MenuItem>
       ))}

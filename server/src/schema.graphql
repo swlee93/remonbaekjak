@@ -14,13 +14,24 @@ type Query {
 }
 
 type Mutation {
+  login(email: String!, password: String!): AuthPayload
+  signup(email: String!, password: String!, name: String!): AuthPayload
+
   createTask(name: String!, description: String, type: TaskType): Task
   updateSettings(settingsInput: SettingsInput): Settings
 }
 
-type Subscription {
-  createSprint: Sprint
-  registObserver: Observer
+type AuthPayload {
+  token: String
+  user: User
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  tasks: [Task]
+  settings: Settings
 }
 
 type ReportInfoEdge {
@@ -57,59 +68,23 @@ type Task {
   type: TaskType
   name: String!
   description: String!
-  createdBy: String
+  userId: Int
+  user: User
   createdAt: DateTime!
 }
 
 type Settings {
-  userId: String
+  id: ID!
+  userId: Int
+  user: User
   github_personal_access_token: String
   github_repositories: [String]
 }
+
 input SettingsInput {
+  userId: Int
   github_personal_access_token: String
   github_repositories: [String]
-}
-
-type Sprint {
-  id: ID!
-  name: String
-  taskId: Int
-  observers: [Observer]
-  logs: [Log]
-}
-
-type Observer {
-  id: ID!
-  name: String
-  description: String
-  sprint: Sprint
-  sprintId: Int
-  logs: [Log]
-}
-
-type Log {
-  id: ID!
-  type: String
-  level: String
-  title: String
-  message: String
-  createdAt: DateTime
-  sprint: Sprint
-  sprintId: Int
-  observer: Observer
-  observerId: Int
-}
-
-input LinkOrderByInput {
-  description: Sort
-  url: Sort
-  createdAt: Sort
-}
-
-enum Sort {
-  asc
-  desc
 }
 
 enum TaskType {

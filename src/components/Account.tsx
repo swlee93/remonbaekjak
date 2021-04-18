@@ -1,33 +1,20 @@
-import { SocialLogin, UserContext, UserHandlerContext } from 'contexts'
+import { MenuHandlerContext, SocialLogin, UserContext, UserHandlerContext } from 'contexts'
 import React, { useContext, useEffect } from 'react'
 import { Button } from 'antd'
+import { MenuContext } from 'contexts'
+import ButtonGroup from 'antd/lib/button/button-group'
 
 const Account = () => {
-  const { user } = useContext(UserContext)
-  const { onLogin, onLogout } = useContext(UserHandlerContext)
-  const { isAnonymous } = user || {}
-
-  useEffect(() => {
-    if (!!onLogin && !user) {
-      onLogin(SocialLogin.ANONYMOUS)
-    }
-  }, [!!onLogin])
-
-  const onClickLogin = () => {
-    if (onLogin) {
-      onLogin(SocialLogin.GITHUB)
-    }
+  const { isLogin } = useContext(UserContext)
+  const { onLogout } = useContext(UserHandlerContext)
+  const { onSelectMenu } = useContext(MenuHandlerContext)
+  const setMenu = (uri: string) => {
+    onSelectMenu({ uri })
   }
 
-  const onClickLogout = () => {
-    if (onLogout) {
-      onLogout()
-    }
-  }
-  return <></>
   return (
     <>
-      {isAnonymous ? <Button onClick={onClickLogin}>GITHUB</Button> : <Button onClick={onClickLogout}>Logout</Button>}
+      {isLogin ? <Button onClick={onLogout}>Logout</Button> : <Button onClick={() => setMenu('/login')}>Log In</Button>}
     </>
   )
 }

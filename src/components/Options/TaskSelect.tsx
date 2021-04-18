@@ -45,7 +45,6 @@ export default UseQuery(TaskSelect)`
       description,
       type,
       name,
-      createdBy,
       createdAt
     }
   }

@@ -1,5 +1,3 @@
-import React from 'react'
-
 import {
   ApolloProvider,
   ApolloClient,
@@ -10,8 +8,11 @@ import {
   concat,
   ApolloLink,
 } from '@apollo/client'
+import { setContext } from '@apollo/client/link/context'
 import { getMainDefinition } from '@apollo/client/utilities'
 import { WebSocketLink } from '@apollo/client/link/ws'
+
+import { AUTH_TOKEN } from 'contexts/UserProvider'
 
 enum THIRD_PARTY {
   GITHUB = 'GITHUB',
@@ -52,7 +53,7 @@ export class ClientStorage {
   }
 }
 
-const authMiddleware = new ApolloLink((operation, forward) => {
+const githubAuthMiddleware = new ApolloLink((operation, forward) => {
   // add the authorization to the headers
 
   const clientStorage = new ClientStorage()
@@ -69,11 +70,23 @@ const authMiddleware = new ApolloLink((operation, forward) => {
 })
 
 const githubLink = concat(
-  authMiddleware,
+  githubAuthMiddleware,
   new HttpLink({
     uri: 'https://api.github.com/graphql',
   }),
 )
+
+const authLink = setContext((_, { headers }) => {
+  const token = localStorage.getItem(AUTH_TOKEN)
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : '',
+    },
+  }
+})
+
+const httpLinkWithAuth = concat(authLink, httpLink)
 
 const splitLink = split(
   ({ query }) => {
@@ -81,7 +94,7 @@ const splitLink = split(
     return definition.kind === 'OperationDefinition' && definition.operation === 'subscription'
   },
   wsLink,
-  split(({ getContext }) => getContext()?.client === THIRD_PARTY.GITHUB, githubLink, httpLink),
+  split(({ getContext }) => getContext()?.client === THIRD_PARTY.GITHUB, githubLink, httpLinkWithAuth),
 )
 
 const client = new ApolloClient({

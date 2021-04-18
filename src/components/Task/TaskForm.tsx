@@ -100,7 +100,6 @@ export default UseMutation(TaskForm)`
         name,
         description,
         type,
-        createdBy,
         createdAt
       }
     } 

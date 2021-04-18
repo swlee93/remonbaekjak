@@ -23,8 +23,8 @@ const HeaderPlace = ({ children }: { children: JSX.Element }) => {
 }
 
 const Header = () => {
-  const { user } = useContext(UserContext)
-  const hasUser = !!user
+  const {} = useContext(UserContext)
+
   const headerPlaceId = useHeaderID()
 
   return (

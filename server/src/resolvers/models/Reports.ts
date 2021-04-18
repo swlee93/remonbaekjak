@@ -11,7 +11,7 @@ const getReportInfoByTimestamp = async (parent, args, context, info) => {
     default:
       const files = getTargetFileList(FILEDB_PATH.REPORT, argTaskId, 'json')
 
-      return await files.reduce((acc, { path, name, timestamp, taskId } = {}) => {
+      return await files.reduce((acc, { path, name, timestamp, taskId }) => {
         if (timestamp === argTimestamp && !acc.timestamp) {
           const task = taskManager.getTaskBy({ taskId })
           const data = fse.readJsonSync(path) || {}

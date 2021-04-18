@@ -11,10 +11,11 @@ import LightHouse from './collectors/LightHouse'
 
 import Query from './resolvers/Query'
 import Mutation from './resolvers/Mutation'
-import Subscription from './resolvers/Subscription'
+// import Subscription from './resolvers/Subscription'
 
 import path from 'path'
 import fs from 'fs'
+import { getUserId } from './utils'
 
 const schema = [fs.readFileSync(path.join(__dirname, 'schema.graphql'), 'utf8')]
 
@@ -32,7 +33,7 @@ const main = async () => {
   const resolvers = {
     Query,
     Mutation,
-    Subscription,
+    // Subscription,
     JSON: GraphQLJSON,
     JSONObject: GraphQLJSONObject,
   }
@@ -44,19 +45,27 @@ const main = async () => {
     typeDefs: schema,
     resolvers,
     context: ({ req }) => {
+      const userId = req && req.headers.authorization ? getUserId(req) : null
       return {
         ...req,
         prisma,
         pubsub,
         taskManager,
-        user: { id: 'SYSTEM' },
+        userId,
       }
     },
 
     subscriptions: {
-      onConnect: () => {
-        return {
-          prisma,
+      onConnect: (connectionParams: any) => {
+        if (connectionParams.authToken) {
+          return {
+            prisma,
+            userId: getUserId(null, connectionParams.authToken),
+          }
+        } else {
+          return {
+            prisma,
+          }
         }
       },
       onDisconnect: () => {},

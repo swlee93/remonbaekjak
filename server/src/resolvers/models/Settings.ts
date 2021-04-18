@@ -8,20 +8,23 @@ const parseSettings = async (original: any = {}) => {
 }
 
 async function getSettings(parent, args, context) {
-  return context.prisma.settings
+  const userId = context?.userId
+
+  return await context.prisma.settings
     .upsert({
-      where: { userId: context.user.id },
+      where: { userId },
       update: {},
-      create: { userId: context.user.id },
+      create: { user: { connect: { id: userId } } },
     })
     .then(parseSettings)
 }
+
 async function updateSettings(parent, args, context) {
   const { github_personal_access_token, github_repositories } = args.settingsInput
-
+  const userId = context?.userId
   return context.prisma.settings
     .update({
-      where: { userId: context.user.id },
+      where: { userId },
       data: {
         github_personal_access_token,
         github_repositories: (github_repositories && github_repositories.join(',')) || '',

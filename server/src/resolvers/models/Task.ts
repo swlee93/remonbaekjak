@@ -1,22 +1,22 @@
 async function getTasks(parent, args, context) {
   return await context.prisma.task.findMany()
-  //   context.prisma.link.findUnique({ where: { id: parent.id } }).postedBy()
 }
 
 async function createTask(parent, args, context, info) {
-  const { userId } = context
-  const { name, description = '', type = process.env.DEFAULT_TASK_TYPE, createdBy } = args
+  const { name, description = '', type = process.env.DEFAULT_TASK_TYPE } = args
+  const userId = context?.userId
 
   const created = await context.prisma.task.create({
     data: {
       name,
       description,
       type,
-      createdBy: createdBy || userId || process.env.DEFAULT_TASK_CREATEDBY,
+      // userId,
+      user: { connect: { id: userId } },
     },
   })
 
   return created
 }
 
-export  { getTasks, createTask }
+export { getTasks, createTask }
