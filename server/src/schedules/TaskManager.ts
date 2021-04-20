@@ -69,14 +69,10 @@ class TaskManager {
         await turn
         const { type } = task
         const Collector = collector[type]
-        if (Collector) {
-          const runner = new Collector({ task })
-          setState(task)
-          return runner.do()
-        } else {
-          //
-          return
-        }
+
+        const runner = new Collector({ task })
+        setState(task)
+        return runner.do()
       }, Promise.resolve())
     })(this)
 

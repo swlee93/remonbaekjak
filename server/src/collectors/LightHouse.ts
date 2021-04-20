@@ -15,8 +15,7 @@ class LightHouse {
   do = async () => {
     await (async () => {
       if (!chromeLauncher) {
-        console.log('not launched')
-        return
+        throw '!chromeLauncher'
       }
       const chrome = await chromeLauncher.launch({ chromeFlags: ['--headless'] })
       const options = { logLevel: '', output: 'json', onlyCategories: ['performance'], port: chrome.port }
@@ -70,9 +69,14 @@ class LightHouse {
 
       await chrome.kill()
     })()
-    await sleep(() => {
-      console.log('LightHouse.done', this.task.id, Date.now())
-    }, Number(process.env.LIGHTHOUSE_SLEEP_INTERVAL_BETWEEN_TASK))
+      .catch((error) => {
+        console.error('LightHouse.error', error?.code || error)
+      })
+      .finally(() => {
+        console.log('LightHouse.done', this.task.id, Date.now())
+      })
+    // 과도한 요청 방지 차원에서 sleep
+    await sleep(() => {}, Number(process.env.LIGHTHOUSE_SLEEP_INTERVAL_BETWEEN_TASK))
   }
 }
 
