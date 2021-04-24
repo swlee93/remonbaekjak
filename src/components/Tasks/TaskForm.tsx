@@ -15,6 +15,7 @@ interface TaskFormInterface {
   initialValues?: TaskInterface
   visible: boolean
   setVisible: (visible: boolean) => void
+  setRefetchTrigger: (trigger: null | number) => void
 }
 
 const TaskForm = ({
@@ -25,8 +26,8 @@ const TaskForm = ({
   called,
   loading,
   error,
+  setRefetchTrigger,
 }: UseMutationProps<TaskFormInterface>) => {
-  const { refetch } = useContext(UseQueryContext)
   const [form] = Form.useForm()
   const onValuesChange = ({}: {}) => {}
 
@@ -45,8 +46,9 @@ const TaskForm = ({
     if (called) {
       if (loading) {
       } else if (error) {
-      } else if (typeof refetch === 'function') {
-        refetch()
+        console.error(error)
+      } else if (typeof setRefetchTrigger === 'function') {
+        setRefetchTrigger(Math.random())
       }
     }
   }, [called, error, loading])

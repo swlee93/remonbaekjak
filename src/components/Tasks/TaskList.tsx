@@ -26,11 +26,6 @@ const columns = [
     dataIndex: 'description',
   },
   {
-    title: 'Created By',
-    dataIndex: 'user',
-    render: (user: any, record: any) => user?.email,
-  },
-  {
     title: 'Created At',
     dataIndex: 'createdAt',
   },
@@ -43,8 +38,10 @@ const columns = [
 
 const SortableElement = SE((props: any) => <tr {...props} />)
 const SortableContainer = SC((props: any) => <tbody {...props} />)
-
-const TaskList = ({ data: _data_, loading, error }: UseQueryProps<any>) => {
+interface TaskListProps {
+  refetchTrigger: null | number
+}
+const TaskList = ({ data: _data_, loading, error, refetch, refetchTrigger }: UseQueryProps<TaskListProps>) => {
   const data = useMemo(() => _data_?.getTasks, [_data_])
   const [dataSource, setDataSource] = useState(data || [])
 
@@ -69,6 +66,13 @@ const TaskList = ({ data: _data_, loading, error }: UseQueryProps<any>) => {
     const index = dataSource.findIndex((x: any) => x.id === restProps['data-row-key'])
     return <SortableElement index={index} {...restProps} />
   }
+
+  useEffect(() => {
+    console.log('refetchTrigger', refetchTrigger)
+    if (refetchTrigger) {
+      refetch()
+    }
+  }, [refetchTrigger])
 
   return (
     <Table

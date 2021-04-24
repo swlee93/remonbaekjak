@@ -1,5 +1,5 @@
 export { default as Home } from './Home'
-export { default as Task } from './Task'
+export { default as Tasks } from './Tasks'
 export { default as Settings } from './Settings'
 export { default as Comments } from './Comments'
 export { default as Metrics } from './Metrics'

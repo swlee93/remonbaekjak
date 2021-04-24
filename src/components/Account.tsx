@@ -1,8 +1,7 @@
-import { MenuHandlerContext, SocialLogin, UserContext, UserHandlerContext } from 'contexts'
-import React, { useContext, useEffect } from 'react'
+import { useContext } from 'react'
+import { MenuHandlerContext, UserContext, UserHandlerContext } from 'contexts'
 import { Button } from 'antd'
-import { MenuContext } from 'contexts'
-import ButtonGroup from 'antd/lib/button/button-group'
+import { gql, useQuery } from '@apollo/client'
 
 const Account = () => {
   const { isLogin } = useContext(UserContext)

@@ -15,9 +15,11 @@ const Navigation = () => {
   if (!menu || !defaultMenu || !onSelectMenu) return <></>
   return (
     <Menu mode='inline' defaultSelectedKeys={[defaultMenu?.uri]} onSelect={onSelect} style={{ borderRight: 'unset' }}>
-      {menu.map(({ name, uri }: MenuItemInterface) => (
-        <MenuItem key={uri}>{name}</MenuItem>
-      ))}
+      {menu
+        .filter((m) => m.sider !== false)
+        .map(({ name, uri }: MenuItemInterface) => (
+          <MenuItem key={uri}>{name}</MenuItem>
+        ))}
     </Menu>
   )
 }

@@ -3,8 +3,10 @@ import { Affix, Button, Drawer, Input } from 'antd'
 import TaskForm from './TaskForm'
 
 import { PlusCircleOutlined } from '@ant-design/icons'
-interface AddTaskProps {}
-const AddTask = ({}: AddTaskProps) => {
+interface AddTaskProps {
+  setRefetchTrigger: (trigger: null | number) => void
+}
+const AddTask = ({ setRefetchTrigger }: AddTaskProps) => {
   const [isAddTaskFormVisible, setAddTaskFormVisible] = useState(false)
   const onClickAddTask = () => {
     setAddTaskFormVisible(true)
@@ -15,7 +17,11 @@ const AddTask = ({}: AddTaskProps) => {
       <Button type='text' icon={<PlusCircleOutlined />} onClick={onClickAddTask}>
         Add Task
       </Button>
-      <TaskForm visible={isAddTaskFormVisible} setVisible={setAddTaskFormVisible} />
+      <TaskForm
+        visible={isAddTaskFormVisible}
+        setVisible={setAddTaskFormVisible}
+        setRefetchTrigger={setRefetchTrigger}
+      />
     </>
   )
 }

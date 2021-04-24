@@ -3,6 +3,18 @@ import jwt from 'jsonwebtoken'
 
 import { APP_SECRET } from '../../utils'
 
+export async function getUser(parent, args, context, info) {
+  const userId = jwt.verify(args.token, APP_SECRET)?.userId
+
+  const user = await context.prisma.user.findUnique({
+    where: { id: userId },
+  })
+  if (!user) {
+    throw new Error('No such user found')
+  }
+  return user
+}
+
 export async function signup(parent, args, context, info) {
   const password = await bcrypt.hash(args.password, 10)
   const user = await context.prisma.user.create({

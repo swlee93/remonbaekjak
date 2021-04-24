@@ -1,19 +1,17 @@
-import { Button, Input } from 'antd'
+import { useContext, useEffect, useState } from 'react'
+import { Button, Input, Form, Space } from 'antd'
+
 import { HeaderPlace } from 'components/Header'
 import { UserHandlerContext } from 'contexts'
-import React, { useContext, useEffect, useState } from 'react'
-import { useHistory } from 'react-router'
+
+import { StyledContent } from 'styles/LayoutStyles'
 import { UseMutation, UseMutationProps } from 'utils/fetches'
 
 const SignUp = ({ onSubmit, completed, called }: UseMutationProps<any>) => {
   const { onSignUp } = useContext(UserHandlerContext)
-  const [formState, setFormState] = useState({
-    email: '',
-    password: '',
-    name: '',
-  })
-  const onClickCreate = () => {
-    onSubmit(formState)
+
+  const onFinish = (values: any) => {
+    onSubmit(values)
   }
 
   useEffect(() => {
@@ -27,44 +25,37 @@ const SignUp = ({ onSubmit, completed, called }: UseMutationProps<any>) => {
         <div>Sign Up</div>
       </HeaderPlace>
 
-      <div>
-        <Input
-          value={formState.name}
-          onChange={(e) =>
-            setFormState({
-              ...formState,
-              name: e.target.value,
-            })
-          }
-          type='text'
-          placeholder='Your name'
-        />
-        <Input
-          value={formState.email}
-          onChange={(e) =>
-            setFormState({
-              ...formState,
-              email: e.target.value,
-            })
-          }
-          type='text'
-          placeholder='Your email address'
-        />
-        <Input
-          value={formState.password}
-          onChange={(e) =>
-            setFormState({
-              ...formState,
-              password: e.target.value,
-            })
-          }
-          type='password'
-          placeholder='Choose a safe password'
-        />
-      </div>
-      <div>
-        <Button onClick={onClickCreate}>create account</Button>
-      </div>
+      <StyledContent gap='20px'>
+        <Space>
+          <Form name='login' onFinish={onFinish}>
+            <Form.Item
+              label='Email'
+              name='email'
+              rules={[{ required: true, type: 'email', message: 'It is not a valid email!' }]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item label='Name' name='name' rules={[{ required: true, message: 'Please input your name!' }]}>
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              label='Password'
+              name='password'
+              rules={[{ required: true, message: 'Please input your password!' }]}
+            >
+              <Input.Password />
+            </Form.Item>
+
+            <Form.Item>
+              <Button type='primary' htmlType='submit'>
+                Submit
+              </Button>
+            </Form.Item>
+          </Form>
+        </Space>
+      </StyledContent>
     </>
   )
 }

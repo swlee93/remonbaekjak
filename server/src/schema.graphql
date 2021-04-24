@@ -1,4 +1,5 @@
 type Query {
+  getUser(token: String): User
   getTasks: [Task]
   getLightHouseData(taskId: ID, subtype: String, stime: Float, etime: Float, includeColumns: String): LightHouseData
   getReportInfos(
