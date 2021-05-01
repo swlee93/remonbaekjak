@@ -76,7 +76,7 @@ const UserProvider = ({ children }: UserProviderInterface) => {
     if (token) {
       localStorage.setItem(AUTH_TOKEN, token)
       setAuthPayload({ isLogin: true, token })
-      onSelectMenu({ uri: '/task' })
+      onSelectMenu({ uri: '/monitors' })
     }
   }
 
@@ -84,7 +84,7 @@ const UserProvider = ({ children }: UserProviderInterface) => {
     if (token) {
       localStorage.setItem(AUTH_TOKEN, token)
       setAuthPayload({ isLogin: true, token })
-      onSelectMenu({ uri: '/task' })
+      onSelectMenu({ uri: '/monitors' })
     }
   }
   const onLogout = () => {
@@ -105,6 +105,7 @@ const UserProvider = ({ children }: UserProviderInterface) => {
   useEffect(() => {
     console.log('error?.message', error?.message)
     if (error?.message) {
+      message.destroy()
       message.error(error?.message)
       onLogout()
     }

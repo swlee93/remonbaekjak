@@ -1,6 +1,6 @@
 declare module 'components' {
   export const Home = any
-  export const Tasks = any
+  export const Monitors = any
   export const Settings = any
   export const Comments = any
   export const Metrics = any

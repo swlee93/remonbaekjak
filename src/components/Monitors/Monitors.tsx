@@ -4,7 +4,8 @@ import { HeaderPlace } from 'components/Header'
 
 import AddTask from './AddTask'
 
-const Task = () => {
+const Monitors = () => {
+  const [isActionsVisible, setIsActionsVisible] = useState()
   const [refetchTrigger, setRefetchTrigger] = useState<null | Number>(null)
 
   return (
@@ -17,4 +18,4 @@ const Task = () => {
   )
 }
 
-export default Task
+export default Monitors

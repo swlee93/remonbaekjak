@@ -76,7 +76,6 @@ const TaskForm = ({
         }
       >
         <Form
-          layout='vertical'
           requiredMark={true}
           form={form}
           initialValues={initialValues}
@@ -90,13 +89,13 @@ const TaskForm = ({
               </Radio.Button>
             </Radio.Group>
           </Form.Item>
-          <Form.Item label='Name' name='name' required>
+          <Form.Item label='Name' name='name' required wrapperCol={{ span: 4 }}>
             <Input placeholder='Name' />
           </Form.Item>
-          <Form.Item label='Description' name='descripton'>
+          <Form.Item label='Description' name='description' wrapperCol={{ span: 8 }}>
             <Input placeholder='Description' />
           </Form.Item>
-          <Form.Item label='Request URL' name='lh_request_url'>
+          <Form.Item label='Request URL' name='lh_request_url' required>
             <Input placeholder='http://' />
           </Form.Item>
         </Form>

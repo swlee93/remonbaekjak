@@ -14,7 +14,7 @@ const AddTask = ({ setRefetchTrigger }: AddTaskProps) => {
 
   return (
     <>
-      <Button type='text' icon={<PlusCircleOutlined />} onClick={onClickAddTask}>
+      <Button type='primary' icon={<PlusCircleOutlined />} onClick={onClickAddTask}>
         Add Task
       </Button>
       <TaskForm

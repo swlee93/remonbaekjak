@@ -30,13 +30,15 @@ async function createTask(parent, args, context, info) {
 async function deleteTask(parent, args, context, info) {
   const { id } = args
 
-  const deleted = await context.prisma.task.delete({
-    where: {
-      id,
-    },
-  })
+  const tagDeleteArgs: Prisma.TagDeleteManyArgs = {
+    where: { taskId: id },
+  }
+  await context.prisma.tag.deleteMany(tagDeleteArgs)
 
-  return deleted
+  const taskDeleteArgs: Prisma.TaskDeleteArgs = {
+    where: { id },
+  }
+  return await context.prisma.task.delete(taskDeleteArgs)
 }
 
 export { getTasks, createTask, deleteTask }

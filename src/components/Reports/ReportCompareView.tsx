@@ -20,7 +20,7 @@ interface ReportCompareViewInterface {
   compareB?: ReportInfoData
 }
 
-const toFixed = (value: number) => Number(value.toFixed(2))
+const toFixed = (value: number = 0) => Number(value.toFixed(2))
 
 const ReportCompareView = ({ compareA, compareB }: ReportCompareViewInterface) => {
   const audits = useMemo(() => {

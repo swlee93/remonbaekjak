@@ -21,7 +21,11 @@ class TaskManager {
       '*/5 * * * * *',
       async () => {
         await this.db
-          .findMany()
+          .findMany({
+            include: {
+              tags: true, // Return all fields
+            },
+          })
           .then((result) => {
             this.setTasks(result)
           })

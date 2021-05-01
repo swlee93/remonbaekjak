@@ -14,7 +14,7 @@ const DeleteTask = ({ taskId, onSubmit, setRefetchTrigger }: UseMutationProps<De
       setRefetchTrigger(Math.random())
     }
   }
-  return <Button type='text' icon={<DeleteOutlined />} onClick={onClickDelete} />
+  return <Button icon={<DeleteOutlined />} onClick={onClickDelete} />
 }
 
 export default UseMutation(DeleteTask)`

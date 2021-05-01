@@ -1,11 +1,13 @@
-import { Table, Tag } from 'antd'
+import { Space, Table, Tag } from 'antd'
 import { SortableContainer as SC, SortableElement as SE, SortableHandle as SH } from 'react-sortable-hoc'
 import { MenuOutlined } from '@ant-design/icons'
 import arrayMove from 'array-move'
 import { ReactElement, useEffect, useMemo, useState } from 'react'
-import TaskListAction from './TaskListAction'
+import TaskAction from './TaskAction'
 import { UseQuery, UseQueryProps } from 'utils/fetches'
-import { getTagsWithLabel } from './TaskMeta'
+import { getAnyPropsToTagWithName, getTagsWithName } from './TaskMeta'
+
+import { Tagging, Ellipsis } from 'components/DataDisplay'
 
 const DragHandle = SH(() => <MenuOutlined style={{ cursor: 'grab', color: '#999' }} />)
 
@@ -33,14 +35,18 @@ const TaskList = ({
     {
       title: 'Tags',
       key: 'tags',
-      render: (_: any, record: any) => {
-        const tags: { key: string; value: string }[] = record?.tags || []
+      render: (_: any, record: any = {}) => {
+        const { tags = [], ...rest } = record
         return (
           <>
-            {getTagsWithLabel(tags).map(({ key, value, name }) => {
-              return <Tag key={key}>{`${name}: ${value}`}</Tag>
+            {getTagsWithName(tags).map(({ key, value, name }) => {
+              return <Tagging key={key} name={name} value={value} />
             })}
-            <Tag>{`Created At: ${record.createdAt}`}</Tag>
+            <Ellipsis>
+              {getAnyPropsToTagWithName(rest).map(({ key, value, name }) => {
+                return <Tagging key={key} name={name} value={value} />
+              })}
+            </Ellipsis>
           </>
         )
       },
@@ -48,7 +54,7 @@ const TaskList = ({
     {
       title: 'Action',
       key: 'action',
-      render: (text: string, record: any) => <TaskListAction record={record} setRefetchTrigger={setRefetchTrigger} />,
+      render: (text: string, record: any) => <TaskAction record={record} setRefetchTrigger={setRefetchTrigger} />,
     },
   ])
   useEffect(() => {
@@ -105,13 +111,10 @@ export default UseQuery(TaskList)`
       id
       type
       name
+      description
       tags {
         key
         value
-      }
-      user {
-        name
-        email
       }
       createdAt
     }

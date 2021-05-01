@@ -6,7 +6,7 @@ export interface MenuItemInterface {
 }
 
 const MENU: MenuItemInterface[] = [
-  { uri: '/task', name: 'Tasks', component: 'Tasks' },
+  { uri: '/monitors', name: 'Monitors', component: 'Monitors' },
   { uri: '/metrics', name: 'Metrics', component: 'Metrics' },
   { uri: '/reports', name: 'Reports', component: 'Reports' },
   // { uri: '/comments', name: 'Comments', component: 'Comments' },

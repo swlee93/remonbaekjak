@@ -17,11 +17,17 @@ class LightHouse {
       if (!chromeLauncher) {
         throw '!chromeLauncher'
       }
+
+      const lhRequestUrl = this.task?.tags?.find((tag) => tag.key === 'lh_request_url')?.value
+      if (!lhRequestUrl) {
+        throw '!lhRequestUrl'
+      }
+      
       const chrome = await chromeLauncher.launch({ chromeFlags: ['--headless'] })
       const options = { logLevel: '', output: 'json', onlyCategories: ['performance'], port: chrome.port }
 
       // 원본 데이터
-      const runnerResult = await lighthouse(this.task.name || 'https://example.com', options)
+      const runnerResult = await lighthouse(lhRequestUrl, options)
       const report = runnerResult.report
       const score = runnerResult.lhr.categories.performance.score * 100
       const reportIndexData = getLightHouseReportIndexData(report, score)

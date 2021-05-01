@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import ButtonGroup from 'antd/lib/button/button-group'
 import { Button, Drawer, Space } from 'antd'
 
-import { DeleteRowOutlined, ExceptionOutlined, LineChartOutlined } from '@ant-design/icons'
+import { ExceptionOutlined, LineChartOutlined } from '@ant-design/icons'
 
 import LightHouseReport from './LightHouseReport'
 import LightHouseMetrics from './LightHouseMetrics'
@@ -16,8 +16,8 @@ const TaskListAction = (props: { record: any; setRefetchTrigger: Function }) => 
   return (
     <Space size='middle'>
       <ButtonGroup>
-        <Button type='link' icon={<ExceptionOutlined />} onClick={() => setReportListVisible(true)} />
-        <Button type='link' icon={<LineChartOutlined />} onClick={() => setMetricsVisible(true)} />
+        <Button icon={<ExceptionOutlined />} onClick={() => setReportListVisible(true)} />
+        <Button icon={<LineChartOutlined />} onClick={() => setMetricsVisible(true)} />
         <DeleteTask taskId={record.id} setRefetchTrigger={setRefetchTrigger} />
       </ButtonGroup>
       <Drawer
