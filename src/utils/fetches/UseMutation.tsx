@@ -75,8 +75,9 @@ const UseMutationComponent = ({ children, query, ownProps = {} }: UseMutationCom
       let msg
       if (loading) {
         msg = message.loading('Action in progress..', 0)
-      } else if (error) {
-        msg = message.error(error)
+      } else if (error?.message) {
+        msg = message.destroy()
+        msg = message.error(error?.message)
       } else {
         msg = message.destroy()
         msg = message.success('Action is successful!', 0)

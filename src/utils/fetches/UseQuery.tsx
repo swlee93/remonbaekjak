@@ -1,6 +1,7 @@
 import React, { createContext, FunctionComponent, useEffect, useMemo, useState } from 'react'
 import { ApolloError, gql, QueryHookOptions, useQuery } from '@apollo/client'
 import { getVariablesFromMatchProps, objectToString } from 'utils/common'
+import { message } from 'antd'
 type Children = FunctionComponent<UseQueryProps<any>>
 interface UseQueryComponentProps {
   children: Children
@@ -42,6 +43,13 @@ const UseQueryComponent = ({ children, query, ownProps = {} }: UseQueryComponent
   }, [objectToString(getVariablesFromMatchProps(ownProps)) !== objectToString(options.variables)])
 
   const { loading, error, data, refetch, called } = useQuery(QUERY_GENERATED, options)
+
+  useEffect(() => {
+    if (error?.message) {
+      message.destroy()
+      message.error(error?.message)
+    }
+  }, [error])
   return (
     <UseQueryContext.Provider value={{ loading, error, data, setOptions, refetch, called }}>
       <>{children({ loading, error, data, setOptions, refetch, called, ...ownProps })}</>

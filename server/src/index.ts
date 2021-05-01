@@ -46,7 +46,6 @@ const main = async () => {
     resolvers,
     context: ({ req }) => {
       const userId = req && req.headers.authorization ? getUserId(req) : null
-      console.log('test', userId)
       return {
         ...req,
         prisma,

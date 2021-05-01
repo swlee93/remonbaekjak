@@ -1,10 +1,9 @@
-import React, { useState } from 'react'
-
-import { UseQuery, UseQueryContext, UseQueryProps } from 'utils/fetches'
+import { useState } from 'react'
 import TaskList from './TaskList'
 import { HeaderPlace } from 'components/Header'
 
 import AddTask from './AddTask'
+
 const Task = () => {
   const [refetchTrigger, setRefetchTrigger] = useState<null | Number>(null)
 
@@ -13,7 +12,7 @@ const Task = () => {
       <HeaderPlace>
         <AddTask setRefetchTrigger={setRefetchTrigger} />
       </HeaderPlace>
-      <TaskList refetchTrigger={refetchTrigger} />
+      <TaskList refetchTrigger={refetchTrigger} setRefetchTrigger={setRefetchTrigger} />
     </>
   )
 }

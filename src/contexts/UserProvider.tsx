@@ -1,8 +1,9 @@
-import { createContext, useCallback, useContext, useEffect, useReducer, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useState } from 'react'
 
 import firebase from 'firebase/app'
 import { MenuContext, MenuHandlerContext } from './MenuProvider'
 import { gql, useLazyQuery, useQuery } from '@apollo/client'
+import { message } from 'antd'
 
 enum SocialLogin {
   'GITHUB',
@@ -19,11 +20,18 @@ interface UserError {
 /**
  * UserContextProps
  */
-interface UserContextProps {
+interface AuthPayload {
   isLogin: boolean
   token: string | null
 }
-const UserContext = createContext<UserContextProps>({ isLogin: false, token: null })
+interface UserContextProps extends AuthPayload {
+  user: {
+    id: string
+    email: string
+    name: string
+  } | null
+}
+const UserContext = createContext<UserContextProps>({ isLogin: false, token: null, user: null })
 
 /**
  * UserHandlerProps
@@ -50,6 +58,8 @@ const GET_USER = gql`
   query GetUser($token: String) {
     getUser(token: $token) {
       id
+      email
+      name
     }
   }
 `
@@ -57,14 +67,15 @@ const GET_USER = gql`
 const UserProvider = ({ children }: UserProviderInterface) => {
   const { currentMenu } = useContext(MenuContext)
   const { onSelectMenu } = useContext(MenuHandlerContext)
-  const [token, setToken] = useState(localStorage.getItem(AUTH_TOKEN))
-  const [isLogin, setIsLogin] = useState<boolean>(!!token)
+  const [authPayload, setAuthPayload] = useState<AuthPayload>(() => {
+    const token = localStorage.getItem(AUTH_TOKEN)
+    return { isLogin: !!token, token }
+  })
 
   const onSignUp = (token: string) => {
     if (token) {
       localStorage.setItem(AUTH_TOKEN, token)
-      setIsLogin(true)
-      setToken(token)
+      setAuthPayload({ isLogin: true, token })
       onSelectMenu({ uri: '/task' })
     }
   }
@@ -72,29 +83,43 @@ const UserProvider = ({ children }: UserProviderInterface) => {
   const onLogin = (token: string) => {
     if (token) {
       localStorage.setItem(AUTH_TOKEN, token)
-      setIsLogin(true)
-      setToken(token)
+      setAuthPayload({ isLogin: true, token })
       onSelectMenu({ uri: '/task' })
     }
   }
   const onLogout = () => {
     localStorage.removeItem(AUTH_TOKEN)
-    setIsLogin(false)
-    setToken('')
+    setAuthPayload({ isLogin: false, token: '' })
     onSelectMenu({ uri: '/login' })
   }
 
+  const [getUser, { data, error }] = useLazyQuery(GET_USER, { variables: { token: authPayload.token } })
   useEffect(() => {
-    if (isLogin) {
+    if (authPayload.isLogin) {
+      getUser()
     } else {
       onSelectMenu({ uri: '/login' })
     }
-  }, [isLogin, token])
+  }, [authPayload])
 
-  const { data } = useQuery(GET_USER, { variables: { token } })
-  console.log('data', data, token)
+  useEffect(() => {
+    console.log('error?.message', error?.message)
+    if (error?.message) {
+      message.error(error?.message)
+      onLogout()
+    }
+  }, [error])
+
+  const user = useMemo(() => {
+    if (authPayload?.isLogin) {
+      return data?.getUser
+    } else {
+      return null
+    }
+  }, [data, authPayload?.isLogin])
+
   return (
-    <UserContext.Provider value={{ isLogin, token }}>
+    <UserContext.Provider value={{ ...authPayload, user }}>
       <UserHandlerContext.Provider value={{ onLogin, onLogout, onSignUp }}>{children}</UserHandlerContext.Provider>
     </UserContext.Provider>
   )

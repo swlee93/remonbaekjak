@@ -1,10 +1,12 @@
 import { useContext } from 'react'
 import { MenuHandlerContext, UserContext, UserHandlerContext } from 'contexts'
-import { Button } from 'antd'
+import { Button, Space } from 'antd'
 import { gql, useQuery } from '@apollo/client'
+import Avatar from 'antd/lib/avatar/avatar'
+import { LoginOutlined, LogoutOutlined } from '@ant-design/icons'
 
 const Account = () => {
-  const { isLogin } = useContext(UserContext)
+  const { isLogin, user } = useContext(UserContext)
   const { onLogout } = useContext(UserHandlerContext)
   const { onSelectMenu } = useContext(MenuHandlerContext)
   const setMenu = (uri: string) => {
@@ -13,7 +15,14 @@ const Account = () => {
 
   return (
     <>
-      {isLogin ? <Button onClick={onLogout}>Logout</Button> : <Button onClick={() => setMenu('/login')}>Log In</Button>}
+      {isLogin ? (
+        <Space size='large'>
+          <Avatar>{user?.name}</Avatar>
+          <Button onClick={onLogout} icon={<LogoutOutlined />} />
+        </Space>
+      ) : (
+        <Button onClick={() => setMenu('/login')} icon={<LoginOutlined />} />
+      )}
     </>
   )
 }

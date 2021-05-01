@@ -16,16 +16,26 @@ model User {
   tasks    Task[]
 }
 
+model Tag {
+  id        Int @id @default(autoincrement())
+  taskId    Int
+  task      Task  @relation(fields: [taskId], references: [id]) 
+  key       String
+  value     String
+}
+
 model Task {
   id          Int      @id @default(autoincrement())
-  name        String
   type        String
+  name        String
   description String
+  tags        Tag[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now()) @updatedAt
   userId      Int      
   user        User     @relation(fields: [userId], references: [id])
 }
+
 
 model Settings {
   id                           Int    @id @default(autoincrement())

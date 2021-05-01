@@ -1,9 +1,10 @@
 import { signup, login } from './models/User'
-import { createTask } from './models/Task'
+import { createTask, deleteTask } from './models/Task'
 import { updateSettings } from './models/Settings'
 export default {
   login,
   signup,
   createTask,
+  deleteTask,
   updateSettings,
 }

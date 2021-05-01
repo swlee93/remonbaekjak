@@ -1,27 +1,42 @@
+import { Prisma } from '.prisma/client'
+
 async function getTasks(parent, args, context) {
   const userId = context?.userId
-  console.log('getTasks', userId)
   return await context.prisma.task.findMany({
     where: {
       userId,
+    },
+    include: {
+      tags: true, // Return all fields
     },
   })
 }
 
 async function createTask(parent, args, context, info) {
-  const { name, description = '', type = process.env.DEFAULT_TASK_TYPE } = args
+  const { name = '', description = '', type = process.env.DEFAULT_TASK_TYPE, tags = [] } = args
   const userId = context?.userId
-  const created = await context.prisma.task.create({
-    data: {
-      name,
-      description,
-      type,
-      // userId,
-      user: { connect: { id: userId } },
+  let task: Prisma.TaskCreateInput = {
+    name,
+    description,
+    type,
+    tags: {
+      create: tags,
+    },
+    user: { connect: { id: userId } },
+  }
+  return await context.prisma.task.create({ data: task })
+}
+
+async function deleteTask(parent, args, context, info) {
+  const { id } = args
+
+  const deleted = await context.prisma.task.delete({
+    where: {
+      id,
     },
   })
 
-  return created
+  return deleted
 }
 
-export { getTasks, createTask }
+export { getTasks, createTask, deleteTask }

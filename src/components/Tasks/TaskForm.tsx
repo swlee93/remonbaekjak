@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from 'react'
 import { Button, Drawer, Form, Input, Radio } from 'antd'
 import { UseMutation, UseMutationProps, UseQueryContext } from 'utils/fetches'
+import TextArea from 'antd/lib/input/TextArea'
 
 enum TaskType {
   'LIGHTHOUSE' = 'LIGHTHOUSE',
@@ -35,13 +36,15 @@ const TaskForm = ({
     form.submit()
   }
 
-  const onFinish = (values: any) => {
+  const onFinish = (values: any = {}) => {
     if (values?.name) {
       if (onSubmit) {
-        onSubmit(values)
+        const { lh_request_url, ...rest } = values
+        onSubmit({ ...rest, tags: [{ key: 'lh_request_url', value: lh_request_url }] })
       }
     }
   }
+
   useEffect(() => {
     if (called) {
       if (loading) {
@@ -80,9 +83,11 @@ const TaskForm = ({
           onValuesChange={onValuesChange}
           onFinish={onFinish}
         >
-          <Form.Item label='Task Type' name='type'>
+          <Form.Item label='Task Type' name='type' style={{ display: 'none' }}>
             <Radio.Group>
-              <Radio.Button value={TaskType.LIGHTHOUSE}>{TaskType.LIGHTHOUSE}</Radio.Button>
+              <Radio.Button defaultChecked={true} value={TaskType.LIGHTHOUSE}>
+                {TaskType.LIGHTHOUSE}
+              </Radio.Button>
             </Radio.Group>
           </Form.Item>
           <Form.Item label='Name' name='name' required>
@@ -91,14 +96,17 @@ const TaskForm = ({
           <Form.Item label='Description' name='descripton'>
             <Input placeholder='Description' />
           </Form.Item>
+          <Form.Item label='Request URL' name='lh_request_url'>
+            <Input placeholder='http://' />
+          </Form.Item>
         </Form>
       </Drawer>
     </div>
   )
 }
 export default UseMutation(TaskForm)`
-    mutation CreateTask($name: String!, $description: String, $type: TaskType) {
-        createTask(name: $name, description: $description, type: $type) {
+    mutation CreateTask($name: String!, $description: String, $type: TaskType, $tags: [TagInput]) {
+        createTask(name: $name, description: $description, type: $type, tags: $tags) {
         name,
         description,
         type,

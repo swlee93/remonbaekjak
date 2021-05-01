@@ -18,7 +18,8 @@ type Mutation {
   login(email: String!, password: String!): AuthPayload
   signup(email: String!, password: String!, name: String!): AuthPayload
 
-  createTask(name: String!, description: String, type: TaskType): Task
+  createTask(name: String!, description: String, type: TaskType, tags: [TagInput]): Task
+  deleteTask(id: Int): Task
   updateSettings(settingsInput: SettingsInput): Settings
 }
 
@@ -63,12 +64,16 @@ type LightHouseData {
   report: [LightHouseReportData]
   performance: [JSON]
 }
-
+type Tag {
+  key: String
+  value: String
+}
 type Task {
   id: ID!
   type: TaskType
   name: String!
   description: String!
+  tags: [Tag]
   userId: Int
   user: User
   createdAt: DateTime!
@@ -80,6 +85,11 @@ type Settings {
   user: User
   github_personal_access_token: String
   github_repositories: [String]
+}
+
+input TagInput {
+  key: String
+  value: String
 }
 
 input SettingsInput {
