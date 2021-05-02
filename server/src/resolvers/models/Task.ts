@@ -1,4 +1,5 @@
 import { Prisma } from '.prisma/client'
+import { withFilter } from 'graphql-subscriptions'
 
 async function getTasks(parent, args, context) {
   const userId = context?.userId
@@ -41,4 +42,25 @@ async function deleteTask(parent, args, context, info) {
   return await context.prisma.task.delete(taskDeleteArgs)
 }
 
-export { getTasks, createTask, deleteTask }
+const updateTaskState = {
+  publish: async function ({ pubsub, taskState }) {
+    pubsub.publish('updateTaskState', {
+      updateTaskState: {
+        action: 'UPDATE_TASK_STATE',
+        taskState,
+      },
+    })
+  },
+  subscribe: withFilter(
+    (parent, args, context) => {
+      const { pubsub, userId } = context
+      console.log('userId', userId)
+      return pubsub.asyncIterator(['updateTaskState'])
+    },
+    (parent, args, context, info) => {
+      return true
+    },
+  ),
+}
+
+export { getTasks, createTask, deleteTask, updateTaskState }

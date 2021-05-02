@@ -1,14 +1,7 @@
 import cron from 'node-cron'
 
-async function updateTaskState({ pubsub, taskState }) {
-  console.log('updateTaskState')
-  pubsub.publish('udpateTaskState', {
-    udpateTaskState: {
-      action: 'UPDATE_TASK_STATE',
-      taskState,
-    },
-  })
-}
+import { updateTaskState } from '../resolvers/models/Task'
+
 class TaskManager {
   tasks = { data: [], timestamp: Date.now() }
   schedule
@@ -63,7 +56,7 @@ class TaskManager {
     this.state.doing = { task: newTask, startedAt: now }
     this.state.waits = this.tasks.data.filter((tsk) => tsk.id !== newTask.id)
 
-    updateTaskState({ pubsub: this.pubsub, taskState: this.state })
+    updateTaskState.publish({ pubsub: this.pubsub, taskState: this.state })
   }
 
   getState = () => this.state

@@ -1,8 +1,2 @@
-export default {
-  updateTaskState: {
-    subscribe: (parent, args, context) => {
-      const { pubsub } = context
-      return pubsub.asyncIterator('updateTaskState')
-    },
-  },
-}
+import { updateTaskState } from './models/Task'
+export default { updateTaskState }

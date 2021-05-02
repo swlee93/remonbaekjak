@@ -46,22 +46,11 @@ const main = async () => {
   const server = new ApolloServer({
     typeDefs: schema,
     resolvers,
-    context: ({ req }) => {
-      const userId = req && req.headers.authorization ? getUserId(req) : null
-
-      return {
-        ...req,
-        prisma,
-        pubsub,
-        taskManager,
-        userId,
-      }
-    },
 
     subscriptions: {
-      // path: 'ws://localhost:4000/graphql',
+      path: '/subscriptions',
       onConnect: (connectionParams: any) => {
-        console.log('subscriptions.onConnect', connectionParams)
+        console.log('subscriptions.onConnect')
         if (connectionParams.authToken) {
           return {
             prisma,
@@ -76,6 +65,17 @@ const main = async () => {
       onDisconnect: () => {
         console.log('subscriptions.onDisconnect')
       },
+    },
+    context: ({ req, connection }) => {
+      const userId = req && req.headers.authorization ? getUserId(req) : connection?.context?.userId || null
+
+      return {
+        ...req,
+        prisma,
+        pubsub,
+        taskManager,
+        userId,
+      }
     },
   })
 
