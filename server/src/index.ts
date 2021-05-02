@@ -11,7 +11,7 @@ import LightHouse from './collectors/LightHouse'
 
 import Query from './resolvers/Query'
 import Mutation from './resolvers/Mutation'
-// import Subscription from './resolvers/Subscription'
+import Subscription from './resolvers/Subscription'
 
 import path from 'path'
 import fs from 'fs'
@@ -23,17 +23,19 @@ dotenv.config()
 
 const main = async () => {
   const pubsub = new PubSub()
+
   const prisma = new PrismaClient({
     errorFormat: 'minimal',
   })
 
-  const taskManager = TaskManager.createInstance({ prisma, collector: { LIGHTHOUSE: LightHouse } })
-  ClearingFileDB.createInstance()
+  const taskManager = TaskManager.createInstance({ prisma, pubsub, collector: { LIGHTHOUSE: LightHouse } })
+
+  const clearingFileDB = ClearingFileDB.createInstance()
 
   const resolvers = {
     Query,
     Mutation,
-    // Subscription,
+    Subscription,
     JSON: GraphQLJSON,
     JSONObject: GraphQLJSONObject,
   }
@@ -46,6 +48,7 @@ const main = async () => {
     resolvers,
     context: ({ req }) => {
       const userId = req && req.headers.authorization ? getUserId(req) : null
+
       return {
         ...req,
         prisma,
@@ -56,7 +59,9 @@ const main = async () => {
     },
 
     subscriptions: {
+      // path: 'ws://localhost:4000/graphql',
       onConnect: (connectionParams: any) => {
+        console.log('subscriptions.onConnect', connectionParams)
         if (connectionParams.authToken) {
           return {
             prisma,
@@ -68,7 +73,9 @@ const main = async () => {
           }
         }
       },
-      onDisconnect: () => {},
+      onDisconnect: () => {
+        console.log('subscriptions.onDisconnect')
+      },
     },
   })
 
@@ -77,6 +84,9 @@ const main = async () => {
    */
   server.listen().then(({ url }) => {
     console.log(`Server is running on ${url}`)
+
+    taskManager.run()
+    clearingFileDB.run()
   })
 }
 

@@ -8,7 +8,10 @@ const getLightHousePathBy = (taskSubType, taskId) => [FILEDB_PATH, 'lighthouse',
 
 class ClearingFileDB {
   taskManager
-  schedule
+
+  constructor() {
+    this.taskManager = TaskManager.getInstance()
+  }
 
   remove = (taskSubType, taskId, expire) => {
     const dbpath = getLightHousePathBy(taskSubType, taskId)
@@ -25,9 +28,9 @@ class ClearingFileDB {
       }
     }
   }
-  constructor() {
-    this.taskManager = TaskManager.getInstance()
-    this.schedule = cron.schedule(
+
+  run = () => {
+    cron.schedule(
       '*/5 * * * * *',
       async () => {
         const tasks = this.taskManager.getTasks()

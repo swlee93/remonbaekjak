@@ -8,7 +8,7 @@ const useHeaderID = () => {
   const { currentMenu } = useContext(MenuContext)
   return useMemo<string>(() => `__header__${currentMenu?.uri}`, [currentMenu?.uri])
 }
-const HeaderPlace = ({ children }: { children: JSX.Element }) => {
+const HeaderPlace = ({ children }: { children: JSX.Element | JSX.Element[] }) => {
   const headerId = useHeaderID()
   const [place, setPlace] = useState(document.getElementById(headerId))
   useEffect(() => {

@@ -23,6 +23,28 @@ type Mutation {
   updateSettings(settingsInput: SettingsInput): Settings
 }
 
+type Subscription {
+  updateTaskState: TaskSubscriptionPayload!
+}
+type DoingTaskState {
+  task: Task
+  startedAt: Float
+}
+type DoneTaskState {
+  task: Task
+  endedAt: Float
+}
+type TaskState {
+  waits: [Task]
+  doing: DoingTaskState
+  done: DoneTaskState
+}
+
+type TaskSubscriptionPayload {
+  action: String!
+  taskState: TaskState!
+}
+
 type AuthPayload {
   token: String
   user: User

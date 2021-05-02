@@ -3,6 +3,7 @@ import TaskList from './TaskList'
 import { HeaderPlace } from 'components/Header'
 
 import AddTask from './AddTask'
+import Processing from './Processing'
 
 const Monitors = () => {
   const [isActionsVisible, setIsActionsVisible] = useState()
@@ -12,6 +13,7 @@ const Monitors = () => {
     <>
       <HeaderPlace>
         <AddTask setRefetchTrigger={setRefetchTrigger} />
+        <Processing />
       </HeaderPlace>
       <TaskList refetchTrigger={refetchTrigger} setRefetchTrigger={setRefetchTrigger} />
     </>

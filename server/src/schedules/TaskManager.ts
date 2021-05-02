@@ -1,5 +1,14 @@
 import cron from 'node-cron'
 
+async function updateTaskState({ pubsub, taskState }) {
+  console.log('updateTaskState')
+  pubsub.publish('udpateTaskState', {
+    udpateTaskState: {
+      action: 'UPDATE_TASK_STATE',
+      taskState,
+    },
+  })
+}
 class TaskManager {
   tasks = { data: [], timestamp: Date.now() }
   schedule
@@ -9,12 +18,14 @@ class TaskManager {
     done: { task: undefined, endedAt: 0 },
   }
   db
+  pubsub
   collector = {}
 
-  constructor({ prisma, collector }) {
+  constructor({ prisma, pubsub, collector }) {
     if (!prisma) return
 
     this.db = prisma.task
+    this.pubsub = pubsub
     this.collector = collector
 
     this.schedule = cron.schedule(
@@ -51,7 +62,8 @@ class TaskManager {
     this.state.done = { task: done, endedAt: now }
     this.state.doing = { task: newTask, startedAt: now }
     this.state.waits = this.tasks.data.filter((tsk) => tsk.id !== newTask.id)
-    // console.log('[TaskManager] getTasks', this.getState())
+
+    updateTaskState({ pubsub: this.pubsub, taskState: this.state })
   }
 
   getState = () => this.state
@@ -96,8 +108,7 @@ export default {
        */
       Object.freeze(instance)
     }
-    // run
-    instance.run()
+
     return instance
   },
   getInstance: () => {
