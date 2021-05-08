@@ -1,4 +1,4 @@
-import { Space, Table, Tag } from 'antd'
+import { Badge, Space, Table, Tag, Tooltip } from 'antd'
 import { SortableContainer as SC, SortableElement as SE, SortableHandle as SH } from 'react-sortable-hoc'
 import { MenuOutlined } from '@ant-design/icons'
 import arrayMove from 'array-move'
@@ -6,7 +6,7 @@ import { ReactElement, useEffect, useMemo, useState } from 'react'
 import TaskAction from './TaskAction'
 import { UseQuery, UseQueryProps } from 'utils/fetches'
 import { getAnyPropsToTagWithName, getTagsWithName } from './TaskMeta'
-
+import moment from 'moment'
 import { Tagging, Ellipsis } from 'components/DataDisplay'
 
 const DragHandle = SH(() => <MenuOutlined style={{ cursor: 'grab', color: '#999' }} />)
@@ -26,37 +26,41 @@ const TaskList = ({
 }: UseQueryProps<TaskListProps>) => {
   const data = useMemo(() => _data_?.getTasks, [_data_])
   const [dataSource, setDataSource] = useState(data || [])
-  const [columns] = useState([
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      className: 'drag-visible',
-    },
-    {
-      title: 'Tags',
-      key: 'tags',
-      render: (_: any, record: any = {}) => {
-        const { tags = [], ...rest } = record
-        return (
-          <>
-            {getTagsWithName(tags).map(({ key, value, name }) => {
-              return <Tagging key={key} name={name} value={value} />
-            })}
-            <Ellipsis>
-              {getAnyPropsToTagWithName(rest).map(({ key, value, name }) => {
+  const columns = useMemo(() => {
+    return [
+      {
+        title: 'Name',
+        dataIndex: 'name',
+        className: 'drag-visible',
+      },
+      {
+        title: 'Tags',
+        key: 'tags',
+        render: (_: any, record: any = {}) => {
+          const { tags = [], ...rest } = record
+          return (
+            <>
+              {getTagsWithName(tags).map(({ key, value, name }) => {
                 return <Tagging key={key} name={name} value={value} />
               })}
-            </Ellipsis>
-          </>
-        )
+              <Ellipsis>
+                {getAnyPropsToTagWithName(rest).map(({ key, value, name }) => {
+                  return <Tagging key={key} name={name} value={value} />
+                })}
+              </Ellipsis>
+            </>
+          )
+        },
       },
-    },
-    {
-      title: 'Action',
-      key: 'action',
-      render: (text: string, record: any) => <TaskAction record={record} setRefetchTrigger={setRefetchTrigger} />,
-    },
-  ])
+      {
+        title: 'Action',
+        key: 'action',
+        render: (text: string, record: any) => {
+          return <TaskAction record={record} setRefetchTrigger={setRefetchTrigger} />
+        },
+      },
+    ]
+  }, [])
   useEffect(() => {
     if (data) {
       setDataSource(data)

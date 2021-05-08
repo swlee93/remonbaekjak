@@ -53,12 +53,17 @@ const updateTaskState = {
   },
   subscribe: withFilter(
     (parent, args, context) => {
-      const { pubsub, userId } = context
-      console.log('userId', userId)
+      const { pubsub } = context
       return pubsub.asyncIterator(['updateTaskState'])
     },
-    (parent, args, context, info) => {
-      return true
+    (payload, args, context, info) => {
+      const userId = context?.userId
+      if (!userId) return false
+
+      const taskState = payload?.updateTaskState?.taskState
+      const isDoingUserId = taskState?.doing?.task?.userId === userId
+      const isDoneUserId = taskState?.done?.task?.userId === userId
+      return isDoingUserId || isDoneUserId
     },
   ),
 }

@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
-import { CheckOutlined } from '@ant-design/icons'
-import { Button, List, Progress } from 'antd'
+import { CheckOutlined, FileSearchOutlined } from '@ant-design/icons'
+import { Button, List, Progress, Space, Statistic } from 'antd'
 
 import { UseQuery, UseQueryProps } from 'utils/fetches'
 
 import InfiniteScroll from 'react-infinite-scroller'
 import { InfiniteScrollWrapper } from 'styles/LayoutStyles'
 import { VIEW_MODE } from './ReportOptionProvider'
+import Text from 'antd/lib/typography/Text'
 
 interface ReportListInterface {
   viewMode?: VIEW_MODE
@@ -63,6 +64,7 @@ const ReportList = ({
           useWindow={false}
         >
           <List
+            size='small'
             loading={loading}
             split={false}
             dataSource={dataSource}
@@ -76,7 +78,7 @@ const ReportList = ({
               return (
                 <List.Item
                   key={item.cursor}
-                  onClick={() => onClickListItem(item.node)}
+                  actions={[<Button onClick={() => onClickListItem(item.node)} icon={<FileSearchOutlined />} />]}
                   extra={
                     viewMode === VIEW_MODE.COMPARE ? (
                       <Button
@@ -88,16 +90,13 @@ const ReportList = ({
                   }
                 >
                   <List.Item.Meta
-                    avatar={
-                      <Progress
-                        width={48}
-                        type='circle'
-                        percent={score}
-                        format={score === 100 ? undefined : () => Number(score.toFixed(2))}
-                      />
+                    title={<Progress percent={score} showInfo={false} />}
+                    description={
+                      <Space align='baseline'>
+                        <Text>{Number(score.toFixed(2))}</Text>
+                        <Text type='secondary'>{timestamp}</Text>
+                      </Space>
                     }
-                    title={task.name}
-                    description={timestamp}
                   />
                 </List.Item>
               )

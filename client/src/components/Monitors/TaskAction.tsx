@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import ButtonGroup from 'antd/lib/button/button-group'
-import { Button, Drawer, Space } from 'antd'
+import { Badge, Button, Drawer, Space } from 'antd'
 
 import { ExceptionOutlined, LineChartOutlined } from '@ant-design/icons'
 

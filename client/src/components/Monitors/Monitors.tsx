@@ -6,15 +6,14 @@ import AddTask from './AddTask'
 import Processing from './Processing'
 
 const Monitors = () => {
-  const [isActionsVisible, setIsActionsVisible] = useState()
   const [refetchTrigger, setRefetchTrigger] = useState<null | Number>(null)
 
   return (
     <>
       <HeaderPlace>
         <AddTask setRefetchTrigger={setRefetchTrigger} />
-        <Processing />
       </HeaderPlace>
+      <Processing />
       <TaskList refetchTrigger={refetchTrigger} setRefetchTrigger={setRefetchTrigger} />
     </>
   )

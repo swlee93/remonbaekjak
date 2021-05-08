@@ -67,6 +67,8 @@ const main = async () => {
       },
     },
     context: ({ req, connection }) => {
+      // context의 return 값이 최종적으로 실행 쿼리의 context로 반환되기 때문에
+      // connection(ws)의 userId를 참조
       const userId = req && req.headers.authorization ? getUserId(req) : connection?.context?.userId || null
 
       return {
