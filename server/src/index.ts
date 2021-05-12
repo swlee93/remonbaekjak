@@ -17,6 +17,8 @@ import path from 'path'
 import fs from 'fs'
 import { getUserId } from './utils'
 
+import boomcatch from './boomcatch'
+
 const schema = [fs.readFileSync(path.join(__dirname, 'schema.graphql'), 'utf8')]
 
 dotenv.config()
@@ -85,10 +87,10 @@ const main = async () => {
    * server.listen
    */
   server.listen().then(({ url }) => {
-    console.log(`Server is running on ${url}`)
-
     taskManager.run()
     clearingFileDB.run()
+    boomcatch.run()
+    console.log(`Server is running on ${url}`)
   })
 }
 
