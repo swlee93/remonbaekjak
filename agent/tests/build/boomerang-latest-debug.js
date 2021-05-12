@@ -383,7 +383,7 @@ BOOMR_check_doc_domain();
 	// Users can set properties by passing in to the init() method.
 	impl = {
 		// Beacon URL
-		beacon_url: "",
+		beacon_url: "/beacon",
 
 		// Forces protocol-relative URLs to HTTPS
 		beacon_url_force_https: true,
