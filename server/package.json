@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "watch": "tsc -w",
-    "dev": "watch & nodemon dist/index.js & npx prisma generate --watch",
+    "dev": "nodemon dist/index.js & npx prisma generate --watch",
     "build": "tsc",
     "start": "node dist/index.js",
     "update-db": "npx prisma db push --preview-feature",

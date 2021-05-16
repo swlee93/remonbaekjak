@@ -1,7 +1,7 @@
 /*jshint node:true, laxcomma:true */
 
 var util = require('util')
-class FileDatabaseBackend {
+class LocalDatabaseBackend {
   constructor(startupTime, config, emitter) {
     var self = this
     this.lastFlush = startupTime
@@ -51,6 +51,6 @@ class FileDatabaseBackend {
 }
 
 exports.init = function (startupTime, config, events) {
-  var instance = new FileDatabaseBackend(startupTime, config, events)
+  var instance = new LocalDatabaseBackend(startupTime, config, events)
   return true
 }
