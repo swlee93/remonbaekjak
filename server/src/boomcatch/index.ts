@@ -1,7 +1,10 @@
 import boomcatch from 'boomcatch'
-// const path = require('path')
+
 const run = () => {
+  const path = require('path')
+
   console.log('boomcatch.run()')
+
   boomcatch.listen({
     // host: 'rum.example.com', // Defaults to '0.0.0.0' (INADDR_ANY)
     host: 'localhost',
@@ -22,7 +25,7 @@ const run = () => {
     log: console, // Defaults to object with `info`, `warn` and `error` log functions.
     // workers: require('os').cpus().length, // Defaults to 0
     // validator: path.resolve('./myvalidator'), // Defaults to 'permissive'
-    // mapper: 'unmapped', //path.resolve('./mymapper'), // Defaults to 'statsd'
+    mapper: path.resolve('./boomcatch/WhaTapStatsD'), //path.resolve('./mymapper'), // Defaults to 'statsd'
     // prefix: 'mystats.rum.', // Defaults to ''
     forwarder: 'udp', //'file', //'http', // Defaults to 'udp',
     // fwdUrl: 'https://127.0.0.1:8125/', // No default

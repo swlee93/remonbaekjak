@@ -1,0 +1,40 @@
+{
+  "configurations": [
+    {
+      "type": "node",
+      "name": "agent",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/agent",
+      "runtimeExecutable": "yarn",
+      "timeout": 50000,
+      "runtimeArgs": ["serve"]
+    },
+    {
+      "type": "node",
+      "name": "server",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/server",
+      "runtimeExecutable": "yarn",
+      "timeout": 50000,
+      "runtimeArgs": ["dev"]
+    },
+    {
+      "type": "node",
+      "name": "client",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/client",
+      "runtimeExecutable": "yarn",
+      "timeout": 50000,
+      "runtimeArgs": ["start"]
+    },
+    {
+      "type": "node",
+      "name": "statsd",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/statsd",
+      "runtimeExecutable": "yarn",
+      "timeout": 50000,
+      "runtimeArgs": ["start"]
+    }
+  ]
+}
