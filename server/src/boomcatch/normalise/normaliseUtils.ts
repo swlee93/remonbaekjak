@@ -19,9 +19,10 @@ export const normaliseTimestamps = (map, data, buckets = {}) => {
     if (data[timestamp.key]) {
       value = parseInt(data[timestamp.key])
     }
-
-    assert = timestamp.optional !== false ? check.assert.maybe : check.assert
-    assert.positive(value)
+    try {
+      assert = timestamp.optional !== false ? check.assert.maybe : check.assert
+      assert.positive(value)
+    } catch {}
 
     if (value) {
       result[timestamp.name] = value
@@ -41,9 +42,7 @@ export const normaliseCounts = (map, data, buckets = {}) => {
     try {
       assert = count.optional !== false ? check.assert.maybe : check.assert
       assert.number(value)
-    } catch (error) {
-      console.error('data[count.key]', count.key, value, data)
-    }
+    } catch {}
 
     if (value) {
       result[count.name] = value
@@ -62,12 +61,25 @@ export const normaliseSizes = (map, data, buckets = {}) => {
     try {
       assert = count.optional !== false ? check.assert.maybe : check.assert
       assert.number(value)
-    } catch (error) {
-      console.error(error)
-    }
+    } catch {}
 
     if (value) {
       result[count.name] = value
+    }
+
+    return result
+  }, buckets)
+}
+export const normaliseTags = (map, data, buckets = {}) => {
+  return map.tags.reduce((result, tag) => {
+    let value
+
+    if (data[tag.key]) {
+      value = data[tag.key]
+    }
+
+    if (value) {
+      result[tag.name] = value
     }
 
     return result

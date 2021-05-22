@@ -74,10 +74,10 @@ export const NORMALISATION_MAP: NormalisationMap = {
     events: [],
     durations: [],
     tags: [
-      // { name: 'name', key: 'browser?.name', optional: true },
-      // { name: 'version', key: 'browser?.version', optional: true },
-      // { name: 'referer', key: 'referer', optional: true },
-      // { name: 'userAgent', key: 'userAgent', optional: true },
+      { name: 'name', key: 'browser.name', optional: true },
+      { name: 'version', key: 'browser.version', optional: true },
+      { name: 'referer', key: 'referer', optional: true },
+      { name: 'userAgent', key: 'userAgent', optional: true },
       { name: 'pid', key: 'pid', optional: true },
       { name: 'platform', key: 'ua.plt', optional: true },
       { name: 'vendor', key: 'ua.vnd', optional: true },
@@ -170,6 +170,7 @@ export const normaliseCategory = (category: Category, data, startKey): any => {
 }
 
 const normalise = (data) => {
+  console.log('data', data)
   return {
     rt: rtData(data),
     navtiming: navtimingData(data),

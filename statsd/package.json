@@ -26,6 +26,7 @@
   "dependencies": {
     "dotenv": "^9.0.2",
     "generic-pool": "2.2.0",
+    "winston": "^3.3.3",
     "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {
