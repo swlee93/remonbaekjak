@@ -11,26 +11,26 @@ type DurationDataProps = {
   name: string
 }
 
-export type TagCountDataProp = {
-  tags: CommonDataProps[]
-  timestamps: CommonDataProps[]
-  milliseconds: CommonDataProps[]
-  counts: CommonDataProps[]
-  bytes: CommonDataProps[]
-  durations: DurationDataProps[]
-}
+export type TagCountDataProp =
+  | {
+      tags: CommonDataProps[]
+      timestamps: CommonDataProps[]
+      milliseconds: CommonDataProps[]
+      counts: CommonDataProps[]
+      bytes: CommonDataProps[]
+      durations: DurationDataProps[]
+    }
+  | {}
 
 export type DataPropKeys = keyof TagCountDataProp
 
-// session, elements, sources, network, performace, memory, browser
 type CategoryMap = {
   session: TagCountDataProp
   elements: TagCountDataProp
-
   browser: TagCountDataProp
-  timers: TagCountDataProp
-
-  continuity: TagCountDataProp
+  performance: TagCountDataProp
+  timeline: TagCountDataProp
+  interaction: TagCountDataProp
   errors: TagCountDataProp
   resource: TagCountDataProp
   page: TagCountDataProp
@@ -38,7 +38,18 @@ type CategoryMap = {
 }
 export type Category = keyof CategoryMap
 
-export const tagCountCategories: Array<Category> = ['session']
+export const tagCountCategories: Array<Category> = [
+  'session',
+  'page',
+  'browser',
+  'elements',
+  'errors',
+  'resource',
+  'network',
+  'performance',
+  'timeline',
+  'interaction',
+]
 export const GLOBAL_DATA: TagCountDataProp = {
   tags: [
     { key: 'browser.name', name: 'Browser' },
@@ -49,7 +60,7 @@ export const GLOBAL_DATA: TagCountDataProp = {
     { key: 'http.initiator', name: 'Beacon Type' }, // xhr spa spa_hard
     { key: 'mob.ct', name: 'Mobile Connection Type' },
     { key: 'nt_nav_type', name: 'Navigation Type' },
-    // ?
+
     { key: 'h.d', name: 'Domain' },
     { key: 'h.key', name: 'API Key' },
     { key: 'h.pg', name: 'Page Group' },
@@ -69,6 +80,10 @@ export const CATEGORY_MAP: CategoryMap = {
     tags: [
       { key: 'rt.si', name: 'Session ID' },
       { key: 'rt.quit', name: 'Unload flag' },
+
+      { key: 'rt.start', name: 'Navigation Start Method' },
+      { key: 'rt.rt_name', name: 'Roudtrip Name' },
+      { key: 'rt.rt_in_type', name: 'Roudtrip Type' },
     ],
     timestamps: [
       { key: 'rt.ss', name: 'Session Start Time' },
@@ -111,10 +126,9 @@ export const CATEGORY_MAP: CategoryMap = {
     milliseconds: [],
     durations: [],
   },
-
-  timers: {
+  timeline: {
     tags: [],
-    counts: [{ key: 'nt_red_cnt', name: 'Redirect Count' }],
+    counts: [],
     timestamps: [
       { key: 'nt_nav_st', name: 'Navigation Start' },
       { key: 'nt_red_st', name: 'Redirect Start' },
@@ -139,6 +153,14 @@ export const CATEGORY_MAP: CategoryMap = {
       { key: 'nt_load_end', name: 'Load Event End' },
       { key: 'nt_worker_start', name: 'Worker Start' },
     ],
+    milliseconds: [],
+    durations: [],
+    bytes: [],
+  },
+  performance: {
+    tags: [],
+    counts: [{ key: 'nt_red_cnt', name: 'Redirect Count' }],
+    timestamps: [],
     milliseconds: [
       { key: 't_resp', name: 'Back-End Time (TTFB)' },
       { key: 't_page', name: 'Front-End Time' },
@@ -188,23 +210,9 @@ export const CATEGORY_MAP: CategoryMap = {
   },
 
   resource: {
-    tags: [
-      { key: 'rt.start', name: 'Navigation Start Method' },
-      { key: 'rt.rt_name', name: 'Roudtrip Name' },
-      { key: 'rt.rt_in_type', name: 'Roudtrip Type' },
-    ],
-    timestamps: [
-      { key: 'rt_st', name: 'Start' },
-      { key: 'rt_fet_st', name: 'Fetch Start' },
-      { key: 'rt_scon_st', name: 'SSL Start' },
-      { key: 'rt_req_st', name: 'Request Start' },
-    ],
-    durations: [
-      { start: 'rt_red_st', end: 'rt_red_end', name: 'Redirect' },
-      { start: 'rt_dns_st', end: 'rt_dns_end', name: 'DNS' },
-      { start: 'rt_con_st', end: 'rt_con_end', name: 'Connect' },
-      { start: 'rt_res_st', end: 'rt_res_end', name: 'Response' },
-    ],
+    tags: [{ key: 'restiming', name: 'Resource' }], // https://developer.akamai.com/mpulse/whats-in-a-beacon/#resource-timing-summary-data
+    timestamps: [],
+    durations: [],
     milliseconds: [],
     counts: [],
     bytes: [],
@@ -254,7 +262,7 @@ export const CATEGORY_MAP: CategoryMap = {
     ],
   },
 
-  continuity: {
+  interaction: {
     milliseconds: [
       { key: 'c.f.d', name: 'Frame Rate Duration' },
       { key: 'c.f', name: 'Average Frame Rate' },

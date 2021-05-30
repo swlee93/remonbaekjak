@@ -1,9 +1,11 @@
 import { normalisePrefix } from '../utils'
 import normalise from '../normalise'
-import { Metric, NormalizedData, metrics, resourceTimings } from './datatype'
-import { platify } from './mapperUtils'
 
-export type Mapper<Data = NormalizedData> = (prefix: string | '', data: Data, referer?: string | '') => Metric
+import { platify, metrics } from './mapperUtils'
+
+export type Metric = string
+export type Unit = 'ms' | 'c'
+export type Mapper<Data = any> = (prefix: string | '', data: Data, referer?: string | '') => Metric
 
 export const initialise = (options) => (data: any, referer: string, userAgent: string, remoteAddress: string) => {
   // normalise
@@ -12,18 +14,8 @@ export const initialise = (options) => (data: any, referer: string, userAgent: s
   const normalized = normalise(platten)
 
   return Object.entries(normalized).reduce((result, [category, categoryData]: any) => {
-    let mapper: Mapper
-
-    switch (category) {
-      case 'resource':
-        mapper = resourceTimings
-        break
-      default:
-        mapper = metrics
-    }
-
     if (categoryData) {
-      result += mapper(`${prefix}${category}.`, categoryData, referer)
+      result += metrics(`${prefix}${category}.`, categoryData)
     }
 
     return result
