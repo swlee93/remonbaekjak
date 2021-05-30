@@ -1,4 +1,4 @@
-import { base36Encode } from '../../boomcatchUtils'
+import { base36Encode } from '../../utils'
 import { Mapper } from '../mapper'
 import { metrics } from '.'
 

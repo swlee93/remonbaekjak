@@ -1,4 +1,4 @@
-import { normalisePrefix } from '../boomcatchUtils'
+import { normalisePrefix } from '../utils'
 import normalise from '../normalise'
 import { Metric, NormalizedData, metrics, resourceTimings } from './datatype'
 import { platify } from './mapperUtils'
@@ -15,7 +15,7 @@ export const initialise = (options) => (data: any, referer: string, userAgent: s
     let mapper: Mapper
 
     switch (category) {
-      case 'restiming':
+      case 'resource':
         mapper = resourceTimings
         break
       default:

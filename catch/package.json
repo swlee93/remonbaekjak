@@ -1,0 +1,22 @@
+{
+  "name": "remonbaekjak-node",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "watch": "tsc -w",
+    "dev": "nodemon dist/index.js",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "boomcatch": "^3.2.5",
+    "check-types": "^11.1.2",
+    "jsurl": "^0.1.5"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.14.3",
+    "@babel/core": "^7.14.3",
+    "@prisma/cli": "^2.12.1",
+    "nodemon": "^2.0.7"
+  }
+}

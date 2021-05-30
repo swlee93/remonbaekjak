@@ -20,6 +20,15 @@
     },
     {
       "type": "node",
+      "name": "catch",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/catch",
+      "runtimeExecutable": "yarn",
+      "timeout": 50000,
+      "runtimeArgs": ["dev"]
+    },
+    {
+      "type": "node",
       "name": "client",
       "request": "launch",
       "cwd": "${workspaceFolder}/client",

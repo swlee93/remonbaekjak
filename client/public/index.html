@@ -109,6 +109,7 @@
               },
               // AutoXHR
               instrument_xhr: true,
+              xhr_excludes: [], // https://developer.akamai.com/tools/boomerang/docs/BOOMR.plugins.AutoXHR.html
               GUID: {
                 cookieName: "wclientId"
               },
@@ -152,7 +153,7 @@
                 onError: function () {
                   return true
                 },
-                maxErrors: 1000
+                maxErrors: 10
               },
               // AutoXHR
               instrument_xhr: true,

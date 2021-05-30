@@ -27,6 +27,8 @@
     "dotenv": "^9.0.2",
     "generic-pool": "2.2.0",
     "winston": "^3.3.3",
+    "winston-logstash": "^0.4.0",
+    "winston3-logstash-transport": "^1.2.3",
     "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {

@@ -1,16 +1,17 @@
-/*jshint node:true, laxcomma:true */
-
-const util = require('util')
-const { createLogger, format, transports } = require('winston')
-const { combine, label, printf, json, logstash } = format
+require('dotenv').config()
+const { createLogger, transports } = require('winston')
+const WinstonLogStash = require('winston3-logstash-transport')
 
 const logger = createLogger({
-  level: 'info',
-  format: printf(({ message, timestamp }) => `[${timestamp}]${JSON.stringify(message)}`),
-  transports: [new transports.File({ filename: 'stats.log' })],
+  transports: [
+    new transports.File({ filename: 'stats.log' }),
+    new WinstonLogStash({
+      mode: 'tcp',
+      host: '0.0.0.0',
+      port: 28777,
+    }),
+  ],
 })
-
-//
 
 class Logger {
   constructor(startupTime, config, emitter) {
@@ -29,8 +30,9 @@ class Logger {
   }
 
   flush = (timestamp, metrics) => {
-    console.log('Flushing stats at ', new Date(timestamp * 1000).toString(), metrics)
     if (metrics.counters['statsd.metrics_received']) {
+      console.log('Flushing stats at ', new Date(timestamp * 1000).toString())
+
       logger.log({
         level: 'info',
         timestamp,
@@ -40,9 +42,9 @@ class Logger {
           gauges: metrics.gauges,
           timer_data: metrics.timer_data,
           counter_rates: metrics.counter_rates,
-          sets: (function (vals) {
-            var ret = {}
-            for (var val in vals) {
+          sets: ((vals) => {
+            let ret = {}
+            for (let val in vals) {
               ret[val] = vals[val].values()
             }
             return ret
@@ -50,8 +52,6 @@ class Logger {
           pctThreshold: metrics.pctThreshold,
         },
       })
-    } else {
-      console.log('!metrics.counters.statsd.metrics_received')
     }
   }
 
@@ -62,7 +62,8 @@ class Logger {
   }
 }
 
-exports.init = function (startupTime, config, events) {
-  var instance = new Logger(startupTime, config, events)
+exports.init = (startupTime, config, events) => {
+  const instance = new Logger(startupTime, config, events)
+
   return true
 }
