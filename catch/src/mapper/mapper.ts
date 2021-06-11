@@ -1,25 +1,27 @@
-import { normalisePrefix } from '../utils'
-import normalise from '../normalise'
+import { normalisePrefix } from '../utils';
+import normalise from '../normalise';
 
-import { platify, metrics } from './mapperUtils'
+import { platify, metrics, taghash } from './mapperUtils';
 
-export type Metric = string
-export type Unit = 'ms' | 'c'
-export type Mapper<Data = any> = (prefix: string | '', data: Data, referer?: string | '') => Metric
+export type Metric = string;
+export type Unit = 'ms' | 'c';
+export type Mapper<Data = any> = (prefix: string | '', data: Data, referer?: string | '') => Metric;
 
 export const initialise = (options) => (data: any, referer: string, userAgent: string, remoteAddress: string) => {
   // normalise
-  const prefix = normalisePrefix(options.prefix)
-  const platten = platify(data, referer, userAgent, remoteAddress)
-  const normalized = normalise(platten)
+
+  const pcode = data['whatap.pcode'];
+  const prefix = normalisePrefix(pcode);
+  const platten = platify(data, referer, userAgent, remoteAddress);
+  const normalized = normalise(platten);
 
   return Object.entries(normalized).reduce((result, [category, categoryData]: any) => {
     if (categoryData) {
-      result += metrics(`${prefix}${category}.`, categoryData)
+      result += metrics(`${prefix}${category}.${taghash(categoryData.tags)}.`, categoryData);
     }
 
-    return result
-  }, '')
-}
+    return result;
+  }, '');
+};
 
-export const separator = '\n'
+export const separator = '\n';

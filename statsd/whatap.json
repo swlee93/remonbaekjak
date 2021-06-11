@@ -1,0 +1,13 @@
+{
+  "whatap.server.host": ["127.0.0.1"],
+  "whatap.server.port": 6610,
+  "boot.retry.limit.count": 30,
+
+  "keyNameSanitize": false,
+  "flushInterval": 10000,
+  "percentThreshold": false,
+  "deleteIdleStats": true,
+  "backends": ["./backends/whatap-statsd"],
+  "calculatedTimerMetrics": ["mean"],
+  "automaticConfigReload": false
+}

@@ -1,42 +1,42 @@
-import tagCountData from './tagCountData'
+import tagCountData from './tagCountData';
 
 type CommonDataProps = {
-  key: string
-  name: string
-}
+  key: string;
+  name: string;
+};
 
 type DurationDataProps = {
-  start: string
-  end: string
-  name: string
-}
+  start: string;
+  end: string;
+  name: string;
+};
 
 export type TagCountDataProp =
   | {
-      tags: CommonDataProps[]
-      timestamps: CommonDataProps[]
-      milliseconds: CommonDataProps[]
-      counts: CommonDataProps[]
-      bytes: CommonDataProps[]
-      durations: DurationDataProps[]
+      tags: CommonDataProps[];
+      timestamps: CommonDataProps[];
+      milliseconds: CommonDataProps[];
+      counts: CommonDataProps[];
+      bytes: CommonDataProps[];
+      durations: DurationDataProps[];
     }
-  | {}
+  | {};
 
-export type DataPropKeys = keyof TagCountDataProp
+export type DataPropKeys = keyof TagCountDataProp;
 
 type CategoryMap = {
-  session: TagCountDataProp
-  elements: TagCountDataProp
-  browser: TagCountDataProp
-  performance: TagCountDataProp
-  timeline: TagCountDataProp
-  interaction: TagCountDataProp
-  errors: TagCountDataProp
-  resource: TagCountDataProp
-  page: TagCountDataProp
-  network: TagCountDataProp
-}
-export type Category = keyof CategoryMap
+  session: TagCountDataProp;
+  elements: TagCountDataProp;
+  browser: TagCountDataProp;
+  performance: TagCountDataProp;
+  timeline: TagCountDataProp;
+  interaction: TagCountDataProp;
+  errors: TagCountDataProp;
+  resource: TagCountDataProp;
+  page: TagCountDataProp;
+  network: TagCountDataProp;
+};
+export type Category = keyof CategoryMap;
 
 export const tagCountCategories: Array<Category> = [
   'session',
@@ -49,41 +49,40 @@ export const tagCountCategories: Array<Category> = [
   'performance',
   'timeline',
   'interaction',
-]
+];
 export const GLOBAL_DATA: TagCountDataProp = {
   tags: [
+    { key: 'whatap.pcode', name: 'pcode' },
     { key: 'browser.name', name: 'Browser' },
-    { key: 'browser.version', name: 'Browser Version' },
+    // { key: 'browser.version', name: 'Browser Version' },
     { key: 'referer', name: 'Referer' },
     { key: 'pid', name: 'Page ID' },
-    { key: 'n', name: 'Beacon Number' },
-    { key: 'http.initiator', name: 'Beacon Type' }, // xhr spa spa_hard
-    { key: 'mob.ct', name: 'Mobile Connection Type' },
-    { key: 'nt_nav_type', name: 'Navigation Type' },
-
-    { key: 'h.d', name: 'Domain' },
-    { key: 'h.key', name: 'API Key' },
-    { key: 'h.pg', name: 'Page Group' },
-    { key: 'h.ab', name: 'A/B Test name' },
-    { key: 'h.v', name: 'Site/App Version' },
-    { key: 'nt_spdy', name: 'SPDY' },
-    { key: 'api', name: 'API Status' },
+    // { key: 'n', name: 'Beacon Number' },
+    // { key: 'http.initiator', name: 'Beacon Type' }, // xhr spa spa_hard
+    // { key: 'mob.ct', name: 'Mobile Connection Type' },
+    // { key: 'nt_nav_type', name: 'Navigation Type' },
+    // { key: 'h.d', name: 'Domain' },
+    // { key: 'h.key', name: 'API Key' },
+    // { key: 'h.pg', name: 'Page Group' },
+    // { key: 'h.ab', name: 'A/B Test name' },
+    // { key: 'h.v', name: 'Site/App Version' },
+    // { key: 'nt_spdy', name: 'SPDY' },
+    // { key: 'api', name: 'API Status' },
   ],
   timestamps: [],
   milliseconds: [],
   durations: [],
   counts: [],
   bytes: [],
-}
+};
 export const CATEGORY_MAP: CategoryMap = {
   session: {
     tags: [
       { key: 'rt.si', name: 'Session ID' },
-      { key: 'rt.quit', name: 'Unload flag' },
-
-      { key: 'rt.start', name: 'Navigation Start Method' },
-      { key: 'rt.rt_name', name: 'Roudtrip Name' },
-      { key: 'rt.rt_in_type', name: 'Roudtrip Type' },
+      // { key: 'rt.quit', name: 'Unload flag' },
+      // { key: 'rt.start', name: 'Navigation Start Method' },
+      // { key: 'rt.rt_name', name: 'Roudtrip Name' },
+      // { key: 'rt.rt_in_type', name: 'Roudtrip Type' },
     ],
     timestamps: [
       { key: 'rt.ss', name: 'Session Start Time' },
@@ -196,11 +195,11 @@ export const CATEGORY_MAP: CategoryMap = {
     tags: [
       { key: 'u', name: 'Source URL' },
       { key: 'pgu', name: 'Page URL' },
-      { key: 'r', name: 'Cookie Referrer' },
-      { key: 'r2', name: 'Referrer' },
+      // { key: 'r', name: 'Cookie Referrer' },
+      // { key: 'r2', name: 'Referrer' },
       { key: 'nu', name: 'Next URL' },
-      { key: 'amp.u', name: 'AMP Document URL' },
-      { key: 'dom.res.slowest', name: 'Slowest Resource' }, // Slowest resource on page (if configured)
+      // { key: 'amp.u', name: 'AMP Document URL' },
+      // { key: 'dom.res.slowest', name: 'Slowest Resource' }, // Slowest resource on page (if configured)
     ],
     counts: [],
     timestamps: [],
@@ -210,12 +209,13 @@ export const CATEGORY_MAP: CategoryMap = {
   },
 
   resource: {
-    tags: [{ key: 'restiming', name: 'Resource' }], // https://developer.akamai.com/mpulse/whats-in-a-beacon/#resource-timing-summary-data
+    tags: [], // https://developer.akamai.com/mpulse/whats-in-a-beacon/#resource-timing-summary-data
     timestamps: [],
     durations: [],
     milliseconds: [],
     counts: [],
     bytes: [],
+    strings: [{ key: 'restiming', name: 'Resource' }],
   },
 
   network: {
@@ -224,8 +224,9 @@ export const CATEGORY_MAP: CategoryMap = {
     tags: [
       { key: 'http.errno', name: 'HTTP Status code' },
       { key: 'http.method', name: 'HTTP method' },
-      { key: 'http.hdr', name: 'HTTP response headers' }, // Optional
+      // { key: 'http.hdr', name: 'HTTP response headers' }, // Optional
     ],
+    strings: [],
     counts: [
       { key: 'mob.dl', name: 'Bandwidth' }, // Effective bandwidth estimate in megabits per second, rounded to the nearest multiple of 25 kilobits per seconds
       { key: 'mob.rtt', name: 'Roundtrip Time' }, // Estimated effective round-trip time of the current connection, rounded to the nearest multiple of 25 milliseconds
@@ -242,10 +243,10 @@ export const CATEGORY_MAP: CategoryMap = {
     durations: [],
     milliseconds: [],
     tags: [
-      { key: 'scr.xy', name: 'Screen Dimentions' },
-      { key: 'scr.orn', name: 'Screen Orientation' },
-      { key: 'cpu.cnc', name: 'CPU cores' },
-      { key: 'bat.lvl', name: 'Battery charge level' },
+      // { key: 'scr.xy', name: 'Screen Dimentions' },
+      // { key: 'scr.orn', name: 'Screen Orientation' },
+      // { key: 'cpu.cnc', name: 'CPU cores' },
+      // { key: 'bat.lvl', name: 'Battery charge level' },
       { key: 'ua.plt', name: 'UserAgent Platform' },
       { key: 'ua.vnd', name: 'UserAgent Vendor' },
     ],
@@ -292,46 +293,45 @@ export const CATEGORY_MAP: CategoryMap = {
     ],
     bytes: [],
     tags: [
-      { key: 'c.e', name: 'Continuity Epoch timestamp' },
-      { key: 'c.f.s', name: 'Frame Rate measurement start time' },
-      { key: 'c.l', name: 'Log' },
-      { key: 'c.lb', name: 'Last Beacon Timestamp' },
-      { key: 'c.lt', name: 'Long Task Data' },
-      { key: 'c.m.n', name: 'Mouse Movement Pixels' },
-      { key: 'c.m.p', name: 'Mouse Movement Percentage' },
-      { key: 'c.s.d', name: 'Distinct Scrolls' },
-      { key: 'c.s.p', name: 'Scroll Percentage' },
-      { key: 'c.s.y', name: 'Scroll Y' },
-      { key: 'c.t.click', name: 'Click Timeline' },
-      { key: 'c.t.domln', name: 'DOM Length Timeline' },
-      { key: 'c.t.domsz', name: 'DOM Size Timeline' },
-      { key: 'c.t.fps', name: 'Frame Rate Timeline' },
-      { key: 'c.t.inter', name: 'Interactions Timeline' },
-      { key: 'c.t.interdly', name: 'Delayed Interactions Timeline' },
-      { key: 'c.t.key', name: 'Keyboard Press Timeline' },
-      { key: 'c.t.longtask', name: 'Long Task Timeline' },
-      { key: 'c.t.mem', name: 'Memory Usage Timeline' },
-      { key: 'c.t.mouse', name: 'Mouse Movements Timeline' },
-      { key: 'c.t.mousepct', name: 'Mouse Movement Percentage Timeline' },
-      { key: 'c.t.scroll', name: 'Scroll Timeline' },
-      { key: 'c.t.scrollpct', name: 'Scroll Percentage Timeline' },
-      { key: 'c.t.mut', name: 'DOM Mutations Timeline' },
-      { key: 'c.tti.m', name: 'Time to Interactive Method' },
+      // { key: 'c.e', name: 'Continuity Epoch timestamp' },
+      // { key: 'c.f.s', name: 'Frame Rate measurement start time' },
+      // { key: 'c.l', name: 'Log' },
+      // { key: 'c.lb', name: 'Last Beacon Timestamp' },
+      // { key: 'c.lt', name: 'Long Task Data' },
+      // { key: 'c.m.n', name: 'Mouse Movement Pixels' },
+      // { key: 'c.m.p', name: 'Mouse Movement Percentage' },
+      // { key: 'c.s.d', name: 'Distinct Scrolls' },
+      // { key: 'c.s.p', name: 'Scroll Percentage' },
+      // { key: 'c.s.y', name: 'Scroll Y' },
+      // { key: 'c.t.click', name: 'Click Timeline' },
+      // { key: 'c.t.domln', name: 'DOM Length Timeline' },
+      // { key: 'c.t.domsz', name: 'DOM Size Timeline' },
+      // { key: 'c.t.fps', name: 'Frame Rate Timeline' },
+      // { key: 'c.t.inter', name: 'Interactions Timeline' },
+      // { key: 'c.t.interdly', name: 'Delayed Interactions Timeline' },
+      // { key: 'c.t.key', name: 'Keyboard Press Timeline' },
+      // { key: 'c.t.longtask', name: 'Long Task Timeline' },
+      // { key: 'c.t.mem', name: 'Memory Usage Timeline' },
+      // { key: 'c.t.mouse', name: 'Mouse Movements Timeline' },
+      // { key: 'c.t.mousepct', name: 'Mouse Movement Percentage Timeline' },
+      // { key: 'c.t.scroll', name: 'Scroll Timeline' },
+      // { key: 'c.t.scrollpct', name: 'Scroll Percentage Timeline' },
+      // { key: 'c.t.mut', name: 'DOM Mutations Timeline' },
+      // { key: 'c.tti.m', name: 'Time to Interactive Method' },
     ],
   },
   errors: {
-    tags: [{ key: 'err', name: 'Errors' }],
+    tags: [
+      // { key: 'err', name: 'Errors' }
+    ],
     milliseconds: [],
     durations: [],
     timestamps: [],
     counts: [],
     bytes: [],
   },
-}
+};
 
-const normalise = (data) => {
-  console.log('data', data)
-  return tagCountData(data)
-}
+const normalise = (data) => tagCountData(data);
 
-export default normalise
+export default normalise;

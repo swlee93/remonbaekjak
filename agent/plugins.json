@@ -1,5 +1,6 @@
 {
   "plugins": [
+    "plugins/whatap.js",
     "plugins/continuity.js",
     "plugins/iframe-delay.js",
     "plugins/auto-xhr.js",
@@ -20,7 +21,6 @@
     "plugins/usertiming.js",
     "plugins/mq.js",
     "plugins/early.js",
-    "plugins/eventtiming.js",
-    "plugins/whatap.js"
+    "plugins/eventtiming.js"
   ]
 }

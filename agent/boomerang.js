@@ -2720,7 +2720,8 @@ BOOMR_check_doc_domain();
 				    "strip_query_string",
 				    "user_ip",
 				    "same_site_cookie",
-				    "secure_cookie"
+				    "secure_cookie",
+					"pcode"
 			    ];
 
 			/* BEGIN_DEBUG */

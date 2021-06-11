@@ -1,0 +1,44 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "log/.9d1a9b999584f647310b876deeaf6331bb50e57a-audit.json",
+    "files": [
+        {
+            "date": 1623244618416,
+            "name": "log/whatap-statsd-2021-06-09-22.log",
+            "hash": "9284abe87d3406bc5ab813e5d18aeb5f"
+        },
+        {
+            "date": 1623247200959,
+            "name": "log/whatap-statsd-2021-06-09-23.log",
+            "hash": "94ce54161a494189edccd86bd4df32ea"
+        },
+        {
+            "date": 1623390391635,
+            "name": "log/whatap-statsd-2021-06-11-14.log",
+            "hash": "a769fc3c7c658265d47f23f0a92b781f"
+        },
+        {
+            "date": 1623399394267,
+            "name": "log/whatap-statsd-2021-06-11-17.log",
+            "hash": "b8ce25f7ca756277c1e7a0b77a4dae9c"
+        },
+        {
+            "date": 1623403111752,
+            "name": "log/whatap-statsd-2021-06-11-18.log",
+            "hash": "d40c4292aa6bab0ee2196d2e1c3f4d52"
+        },
+        {
+            "date": 1623406781019,
+            "name": "log/whatap-statsd-2021-06-11-19.log",
+            "hash": "c4a9a0cc779c90d7d14c705907f5f2c9"
+        },
+        {
+            "date": 1623409684013,
+            "name": "log/whatap-statsd-2021-06-11-20.log",
+            "hash": "0c1df1c0cf15af80ff32f20fa705ea04"
+        }
+    ]
+}

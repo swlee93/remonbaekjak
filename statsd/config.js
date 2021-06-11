@@ -124,8 +124,10 @@ Optional Variables:
                          changes. The default is true. Set this to false to disable.
 */
 {
-  graphitePort: 2003
-, graphiteHost: "127.0.0.1"
-, port: 8125
-, backends: [ "./backends/logger" ]
+  "flushInterval": 10000,
+  "percentThreshold": false,
+  "deleteIdleStats": true,
+  "backends": ["./backends/whatap-statsd"],
+  "calculatedTimerMetrics": ["mean"],
+  "automaticConfigReload": false
 }

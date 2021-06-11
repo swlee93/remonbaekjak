@@ -1,28 +1,33 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { Button, Input, Form, Space, Divider, Card } from 'antd'
-import { HeaderPlace } from 'components/Header'
+import React, { useContext, useEffect, useState } from 'react';
+import { Button, Input, Form, Space, Divider, Card } from 'antd';
+import { HeaderPlace } from 'components/Header';
 
-import { UseMutation, UseMutationProps } from 'utils/fetches'
-import { MenuHandlerContext, UserContext, UserHandlerContext } from 'contexts'
-import { StyledContent, StyledContentInner } from 'styles/LayoutStyles'
+import { UseMutation, UseMutationProps } from 'utils/fetches';
+import { MenuHandlerContext, UserContext, UserHandlerContext } from 'contexts';
+import { StyledContent, StyledContentInner } from 'styles/LayoutStyles';
 
 const Login = ({ onSubmit, completed, called }: UseMutationProps<any>) => {
-  const { onSelectMenu } = useContext(MenuHandlerContext)
-  const { onLogin } = useContext(UserHandlerContext)
+  const { onSelectMenu } = useContext(MenuHandlerContext);
+  const { onLogin } = useContext(UserHandlerContext);
 
   const onClickSignup = () => {
-    onSelectMenu({ uri: '/signup' })
-  }
+    onSelectMenu({ uri: '/signup' });
+  };
 
   useEffect(() => {
     if (called && completed?.login?.token) {
-      onLogin(completed.login.token)
+      onLogin(completed.login.token);
     }
-  }, [completed, called])
+  }, [completed, called]);
 
   const onFinish = (values: any) => {
-    onSubmit(values)
-  }
+    onSubmit(values);
+  };
+
+  useEffect(() => {
+    const xml = new XMLHttpRequest();
+    fetch('https://localhost');
+  }, []);
 
   return (
     <>
@@ -60,8 +65,8 @@ const Login = ({ onSubmit, completed, called }: UseMutationProps<any>) => {
         </Space>
       </StyledContent>
     </>
-  )
-}
+  );
+};
 
 export default UseMutation(Login)`
     mutation LoginMutation( $email: String!, $password: String! ) {
@@ -74,4 +79,4 @@ export default UseMutation(Login)`
             }
         }
     }
-`
+`;

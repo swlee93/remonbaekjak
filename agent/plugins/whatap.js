@@ -1,52 +1,42 @@
-/**
- * @class BOOMR.plugins.WhaTap
- */
 /*eslint dot-notation:0*/
-;(function () {
-  BOOMR = window.BOOMR || {}
-  BOOMR.plugins = BOOMR.plugins || {}
-
-  function info(msg) {
-    BOOMR.info(msg, 'WhaTap')
-  }
-  function warn(msg) {
-    BOOMR.warn(msg, 'WhaTap')
-  }
+(function () {
+  BOOMR = window.BOOMR || {};
+  BOOMR.plugins = BOOMR.plugins || {};
 
   var impl = {
-    license: '',
+    pcode: '',
 
     whatapAnalytics: function () {
-      var data = {}
-      var i, param, value
+      var data = {};
+      var i, param, value;
 
       // by config
-      if (impl.license) {
-        data = { license: impl.license }
+      if (impl.pcode) {
+        data = { pcode: impl.pcode };
       }
 
       // by QUERY_PARAMS
-      const QUERY_PARAMS = ['license']
+      const QUERY_PARAMS = ['pcode'];
       for (i = 0; i < QUERY_PARAMS.length; i++) {
-        param = QUERY_PARAMS[i]
-        value = BOOMR.utils.getQueryParamValue(param)
+        param = QUERY_PARAMS[i];
+        value = BOOMR.utils.getQueryParamValue(param);
         if (value) {
-          data[param] = value
+          data[param] = value;
         }
       }
-      return data
+      return data;
     },
 
     /**
      * Executed on `page_ready` and `xhr_load`
      */
     done: function (edata, ename) {
-      var data, key, beaconParam
+      var data, key, beaconParam;
 
-      data = this.whatapAnalytics()
+      data = this.whatapAnalytics();
       for (var key in data) {
-        var beaconParam = 'whatap.' + key
-        BOOMR.addVar(beaconParam, data[key], true)
+        var beaconParam = 'whatap.' + key;
+        BOOMR.addVar(beaconParam, data[key], true);
       }
     },
 
@@ -54,41 +44,28 @@
      * Fired when the state changes from pre-render to visible
      */
     prerenderToVisible: function () {
-      this.done({}, 'load')
+      this.done({}, 'load');
     },
-  }
+  };
 
   //
   // Exports
   //
-  BOOMR.plugins.WhaTap = {
-    /**
-     * Initializes the plugin.
-     *
-     * @param {object} config Configuration
-     * @param {string} config.WhaTap.license Whether or not to include
-     
-     * @returns {@link BOOMR.plugins.WhaTap} The WhaTap plugin for chaining
-     * @example
-     * BOOMR.init({
-     *   WhaTap: {
-     *     license: "xxxx-xxxx-xxxx-xxxx"
-     *   }
-     * });
-     * @memberof BOOMR.plugins.WhaTap
-     */
+  BOOMR.plugins.whatap = {
     init: function (config) {
-      BOOMR.utils.pluginConfig(impl, config, 'WhaTap', ['license'])
+      impl.pcode = config.pcode;
+
+      config.instrument_xhr = true;
 
       if (!impl.initialized) {
         // we'll add data to the beacon on whichever happens first
-        BOOMR.subscribe('page_ready', impl.done, 'load', impl)
-        BOOMR.subscribe('xhr_load', impl.done, 'xhr', impl)
-        BOOMR.subscribe('prerender_to_visible', impl.prerenderToVisible, 'load', impl)
-        impl.initialized = true
+        BOOMR.subscribe('page_ready', impl.done, 'load', impl);
+        BOOMR.subscribe('xhr_load', impl.done, 'xhr', impl);
+        BOOMR.subscribe('prerender_to_visible', impl.prerenderToVisible, 'load', impl);
+        impl.initialized = true;
       }
 
-      return this
+      return this;
     },
 
     /**
@@ -98,7 +75,7 @@
      * @memberof BOOMR.plugins.WhaTap
      */
     is_complete: function () {
-      return true
+      return true;
     },
-  }
-})()
+  };
+})();

@@ -24,7 +24,7 @@ const run = () => {
     // maxSize: 1048576, // Defaults to -1
     log: console, // Defaults to object with `info`, `warn` and `error` log functions.
     // workers: require('os').cpus().length, // Defaults to 0
-    // validator: path.resolve('./myvalidator'), // Defaults to 'permissive'
+    validator: path.resolve('./dist/validator'), // Defaults to 'permissive'
     mapper: path.resolve('./dist/mapper'), //path.resolve('./mymapper'), // Defaults to 'statsd'
     // prefix: 'mystats.rum.', // Defaults to ''
     forwarder: 'udp', //'file', //'http', // Defaults to 'udp',
