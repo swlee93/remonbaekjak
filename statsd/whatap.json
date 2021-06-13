@@ -1,5 +1,5 @@
 {
-  "whatap.server.host": ["127.0.0.1"],
+  "whatap.server.host": ["192.168.1.102", "192.168.201.110"],
   "whatap.server.port": 6610,
   "boot.retry.limit.count": 30,
 
@@ -8,6 +8,6 @@
   "percentThreshold": false,
   "deleteIdleStats": true,
   "backends": ["./backends/whatap-statsd"],
-  "calculatedTimerMetrics": ["mean"],
+"calculatedTimerMetrics": ["mean", "upper", "lower"],
   "automaticConfigReload": false
 }

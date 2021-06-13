@@ -16,6 +16,13 @@ const printC: Mapper = (prefix, data) => {
   }, '');
 };
 
+const printSet: Mapper = (prefix, data) => {
+  return Object.entries(data || {}).reduce((metrics, [metric, datum]: any) => {
+    if (check.not.number(datum)) return metrics;
+    return metrics + printMetric(prefix, metric, datum, 's') + '\n';
+  }, '');
+};
+
 export const taghash = (data: any = {}) =>
   JSURL.stringify(data).replace('.', '__DOT__').replace('@', '__ADDR__').replace('|', '__BAR__');
 
@@ -28,6 +35,7 @@ export const platify = (data: any = {}, referer: string, userAgent: string, remo
   data.referer = referer;
   data.userAgent = userAgent;
   data.remoteAddress = remoteAddress;
+  data.timestamp = Date.now();
   if (typeof data.browser === 'object') {
     Object.entries(data.browser).forEach(([key, value]) => {
       data[`browser.${key}`] = value;
@@ -37,6 +45,7 @@ export const platify = (data: any = {}, referer: string, userAgent: string, remo
 };
 
 export const metrics = (prefix, data): Metric =>
+  printSet(prefix, data.strings) +
   printC(prefix, data.counts) +
   printC(prefix, data.bytes) +
   printMS(prefix, data.timestamps) +

@@ -1,4 +1,12 @@
-import tagCountData from './tagCountData';
+import {
+  normaliseMilliseconds,
+  normaliseTimestamps,
+  normaliseCounts,
+  normaliseBytes,
+  normaliseTags,
+  normaliseDurations,
+  normaliseStrings,
+} from './normaliseUtils';
 
 type CommonDataProps = {
   key: string;
@@ -11,16 +19,21 @@ type DurationDataProps = {
   name: string;
 };
 
-export type TagCountDataProp =
-  | {
-      tags: CommonDataProps[];
-      timestamps: CommonDataProps[];
-      milliseconds: CommonDataProps[];
-      counts: CommonDataProps[];
-      bytes: CommonDataProps[];
-      durations: DurationDataProps[];
-    }
-  | {};
+type HashDataProps = {
+  key: string;
+  timeUnique?: boolean;
+  name: string;
+};
+
+export type TagCountDataProp = {
+  tags: CommonDataProps[];
+  timestamps: CommonDataProps[];
+  milliseconds: CommonDataProps[];
+  counts: CommonDataProps[];
+  bytes: CommonDataProps[];
+  strings: HashDataProps[];
+  durations: DurationDataProps[];
+};
 
 export type DataPropKeys = keyof TagCountDataProp;
 
@@ -32,11 +45,17 @@ type CategoryMap = {
   timeline: TagCountDataProp;
   interaction: TagCountDataProp;
   errors: TagCountDataProp;
-  resource: TagCountDataProp;
+  // resource: TagCountDataProp;
   page: TagCountDataProp;
   network: TagCountDataProp;
+  ['$whatap.domain']: TagCountDataProp;
 };
-export type Category = keyof CategoryMap;
+
+export enum CategoryAsVariable {
+  '$whatap.domain' = '$whatap.domain',
+}
+
+export type Category = keyof CategoryMap | CategoryAsVariable;
 
 export const tagCountCategories: Array<Category> = [
   'session',
@@ -44,13 +63,15 @@ export const tagCountCategories: Array<Category> = [
   'browser',
   'elements',
   'errors',
-  'resource',
+  // 'resource',
   'network',
   'performance',
   'timeline',
   'interaction',
+  CategoryAsVariable['$whatap.domain'],
 ];
-export const GLOBAL_DATA: TagCountDataProp = {
+
+const GLOBAL_DATA: TagCountDataProp = {
   tags: [
     { key: 'whatap.pcode', name: 'pcode' },
     { key: 'browser.name', name: 'Browser' },
@@ -74,10 +95,27 @@ export const GLOBAL_DATA: TagCountDataProp = {
   durations: [],
   counts: [],
   bytes: [],
+  strings: [],
 };
+
 export const CATEGORY_MAP: CategoryMap = {
+  [CategoryAsVariable['$whatap.domain']]: {
+    tags: [{ key: 'whatap.pcode', name: 'pcode' }],
+    timestamps: [],
+    milliseconds: [],
+    counts: [],
+    bytes: [],
+    durations: [],
+
+    strings: [
+      { key: 'u', timeUnique: true, name: 'Page Views' },
+      { key: 'u', name: 'Unique Page Views' },
+      { key: 'rt.si', name: 'Sessions' },
+    ],
+  },
   session: {
     tags: [
+      ...GLOBAL_DATA.tags,
       { key: 'rt.si', name: 'Session ID' },
       // { key: 'rt.quit', name: 'Unload flag' },
       // { key: 'rt.start', name: 'Navigation Start Method' },
@@ -97,9 +135,10 @@ export const CATEGORY_MAP: CategoryMap = {
     ],
     durations: [],
     bytes: [],
+    strings: [],
   },
   elements: {
-    tags: [],
+    tags: [...GLOBAL_DATA.tags],
     counts: [
       { key: 'dom.res', name: 'Resources' },
       { key: 'dom.doms', name: 'Domains' },
@@ -124,9 +163,10 @@ export const CATEGORY_MAP: CategoryMap = {
     timestamps: [],
     milliseconds: [],
     durations: [],
+    strings: [],
   },
   timeline: {
-    tags: [],
+    tags: [...GLOBAL_DATA.tags],
     counts: [],
     timestamps: [
       { key: 'nt_nav_st', name: 'Navigation Start' },
@@ -155,9 +195,10 @@ export const CATEGORY_MAP: CategoryMap = {
     milliseconds: [],
     durations: [],
     bytes: [],
+    strings: [],
   },
   performance: {
-    tags: [],
+    tags: [...GLOBAL_DATA.tags],
     counts: [{ key: 'nt_red_cnt', name: 'Redirect Count' }],
     timestamps: [],
     milliseconds: [
@@ -172,6 +213,7 @@ export const CATEGORY_MAP: CategoryMap = {
       { key: 'pt.fcp', name: 'First Contentful Paint' },
       { key: 'pt.lcp', name: 'Largest Contentful Paint' },
     ],
+    strings: [],
     durations: [
       { start: 'nt_nav_st', end: 'nt_dns_st', name: 'Before DNS' },
       { start: 'nt_dns_st', end: 'nt_dns_end', name: 'DNS' },
@@ -193,6 +235,7 @@ export const CATEGORY_MAP: CategoryMap = {
 
   page: {
     tags: [
+      ...GLOBAL_DATA.tags,
       { key: 'u', name: 'Source URL' },
       { key: 'pgu', name: 'Page URL' },
       // { key: 'r', name: 'Cookie Referrer' },
@@ -206,26 +249,28 @@ export const CATEGORY_MAP: CategoryMap = {
     milliseconds: [],
     durations: [],
     bytes: [],
+    strings: [],
   },
 
-  resource: {
-    tags: [], // https://developer.akamai.com/mpulse/whats-in-a-beacon/#resource-timing-summary-data
-    timestamps: [],
-    durations: [],
-    milliseconds: [],
-    counts: [],
-    bytes: [],
-    strings: [{ key: 'restiming', name: 'Resource' }],
-  },
+  // resource: {
+  //   tags: [...GLOBAL_DATA.tags], // https://developer.akamai.com/mpulse/whats-in-a-beacon/#resource-timing-summary-data
+  //   timestamps: [],
+  //   durations: [],
+  //   milliseconds: [],
+  //   counts: [],
+  //   bytes: [],
+  //   strings: [{ key: 'restiming', name: 'Resource' }],
+  // },
 
   network: {
-    timestamps: [],
-    durations: [],
     tags: [
+      ...GLOBAL_DATA.tags,
       { key: 'http.errno', name: 'HTTP Status code' },
       { key: 'http.method', name: 'HTTP method' },
       // { key: 'http.hdr', name: 'HTTP response headers' }, // Optional
     ],
+    timestamps: [],
+    durations: [],
     strings: [],
     counts: [
       { key: 'mob.dl', name: 'Bandwidth' }, // Effective bandwidth estimate in megabits per second, rounded to the nearest multiple of 25 kilobits per seconds
@@ -239,10 +284,8 @@ export const CATEGORY_MAP: CategoryMap = {
   },
 
   browser: {
-    timestamps: [],
-    durations: [],
-    milliseconds: [],
     tags: [
+      ...GLOBAL_DATA.tags,
       // { key: 'scr.xy', name: 'Screen Dimentions' },
       // { key: 'scr.orn', name: 'Screen Orientation' },
       // { key: 'cpu.cnc', name: 'CPU cores' },
@@ -250,6 +293,10 @@ export const CATEGORY_MAP: CategoryMap = {
       { key: 'ua.plt', name: 'UserAgent Platform' },
       { key: 'ua.vnd', name: 'UserAgent Vendor' },
     ],
+    timestamps: [],
+    durations: [],
+    milliseconds: [],
+
     counts: [
       { key: 'mem.lsln', name: 'LocalStorage keys' },
       { key: 'mem.ssln', name: 'SessionStorage keys' },
@@ -261,9 +308,38 @@ export const CATEGORY_MAP: CategoryMap = {
       { key: 'mem.lssz', name: 'LocalStorage bytes' },
       { key: 'mem.sssz', name: 'SessionStorage bytes' },
     ],
+    strings: [],
   },
 
   interaction: {
+    tags: [
+      ...GLOBAL_DATA.tags,
+      // { key: 'c.e', name: 'Continuity Epoch timestamp' },
+      // { key: 'c.f.s', name: 'Frame Rate measurement start time' },
+      // { key: 'c.l', name: 'Log' },
+      // { key: 'c.lb', name: 'Last Beacon Timestamp' },
+      // { key: 'c.lt', name: 'Long Task Data' },
+      // { key: 'c.m.n', name: 'Mouse Movement Pixels' },
+      // { key: 'c.m.p', name: 'Mouse Movement Percentage' },
+      // { key: 'c.s.d', name: 'Distinct Scrolls' },
+      // { key: 'c.s.p', name: 'Scroll Percentage' },
+      // { key: 'c.s.y', name: 'Scroll Y' },
+      // { key: 'c.t.click', name: 'Click Timeline' },
+      // { key: 'c.t.domln', name: 'DOM Length Timeline' },
+      // { key: 'c.t.domsz', name: 'DOM Size Timeline' },
+      // { key: 'c.t.fps', name: 'Frame Rate Timeline' },
+      // { key: 'c.t.inter', name: 'Interactions Timeline' },
+      // { key: 'c.t.interdly', name: 'Delayed Interactions Timeline' },
+      // { key: 'c.t.key', name: 'Keyboard Press Timeline' },
+      // { key: 'c.t.longtask', name: 'Long Task Timeline' },
+      // { key: 'c.t.mem', name: 'Memory Usage Timeline' },
+      // { key: 'c.t.mouse', name: 'Mouse Movements Timeline' },
+      // { key: 'c.t.mousepct', name: 'Mouse Movement Percentage Timeline' },
+      // { key: 'c.t.scroll', name: 'Scroll Timeline' },
+      // { key: 'c.t.scrollpct', name: 'Scroll Percentage Timeline' },
+      // { key: 'c.t.mut', name: 'DOM Mutations Timeline' },
+      // { key: 'c.tti.m', name: 'Time to Interactive Method' },
+    ],
     milliseconds: [
       { key: 'c.f.d', name: 'Frame Rate Duration' },
       { key: 'c.f', name: 'Average Frame Rate' },
@@ -292,36 +368,11 @@ export const CATEGORY_MAP: CategoryMap = {
       { key: 'c.s', name: 'Scroll Count' },
     ],
     bytes: [],
-    tags: [
-      // { key: 'c.e', name: 'Continuity Epoch timestamp' },
-      // { key: 'c.f.s', name: 'Frame Rate measurement start time' },
-      // { key: 'c.l', name: 'Log' },
-      // { key: 'c.lb', name: 'Last Beacon Timestamp' },
-      // { key: 'c.lt', name: 'Long Task Data' },
-      // { key: 'c.m.n', name: 'Mouse Movement Pixels' },
-      // { key: 'c.m.p', name: 'Mouse Movement Percentage' },
-      // { key: 'c.s.d', name: 'Distinct Scrolls' },
-      // { key: 'c.s.p', name: 'Scroll Percentage' },
-      // { key: 'c.s.y', name: 'Scroll Y' },
-      // { key: 'c.t.click', name: 'Click Timeline' },
-      // { key: 'c.t.domln', name: 'DOM Length Timeline' },
-      // { key: 'c.t.domsz', name: 'DOM Size Timeline' },
-      // { key: 'c.t.fps', name: 'Frame Rate Timeline' },
-      // { key: 'c.t.inter', name: 'Interactions Timeline' },
-      // { key: 'c.t.interdly', name: 'Delayed Interactions Timeline' },
-      // { key: 'c.t.key', name: 'Keyboard Press Timeline' },
-      // { key: 'c.t.longtask', name: 'Long Task Timeline' },
-      // { key: 'c.t.mem', name: 'Memory Usage Timeline' },
-      // { key: 'c.t.mouse', name: 'Mouse Movements Timeline' },
-      // { key: 'c.t.mousepct', name: 'Mouse Movement Percentage Timeline' },
-      // { key: 'c.t.scroll', name: 'Scroll Timeline' },
-      // { key: 'c.t.scrollpct', name: 'Scroll Percentage Timeline' },
-      // { key: 'c.t.mut', name: 'DOM Mutations Timeline' },
-      // { key: 'c.tti.m', name: 'Time to Interactive Method' },
-    ],
+    strings: [],
   },
   errors: {
     tags: [
+      ...GLOBAL_DATA.tags,
       // { key: 'err', name: 'Errors' }
     ],
     milliseconds: [],
@@ -329,9 +380,49 @@ export const CATEGORY_MAP: CategoryMap = {
     timestamps: [],
     counts: [],
     bytes: [],
+    strings: [],
   },
 };
 
-const normalise = (data) => tagCountData(data);
+export default (data: any) => {
+  return tagCountCategories.reduce((results, category) => {
+    const categoryProps: TagCountDataProp | {} = CATEGORY_MAP[category] || {};
 
-export default normalise;
+    const namespace = (category.startsWith('$') && data[category?.split('$')[1]]) || category;
+
+    results[namespace] = {};
+
+    Object.keys(categoryProps).forEach((dataPropsKey: DataPropKeys) => {
+      let bucket = {};
+      switch (dataPropsKey) {
+        case 'tags':
+          normaliseTags(categoryProps, data, bucket);
+          break;
+
+        case 'timestamps':
+          normaliseTimestamps(categoryProps, data, bucket);
+          break;
+        case 'milliseconds':
+          normaliseMilliseconds(categoryProps, data, bucket);
+          break;
+        case 'counts':
+          normaliseCounts(categoryProps, data, bucket);
+          break;
+        case 'bytes':
+          normaliseBytes(categoryProps, data, bucket);
+          break;
+        case 'durations':
+          normaliseDurations(categoryProps, data, bucket);
+          break;
+        case 'strings':
+          normaliseStrings(categoryProps, data, bucket);
+          break;
+        default:
+      }
+
+      results[namespace][dataPropsKey] = bucket;
+    });
+
+    return results;
+  }, {});
+};

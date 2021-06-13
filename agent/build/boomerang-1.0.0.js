@@ -4471,6 +4471,7 @@ BOOMR_check_doc_domain();
 
   var impl = {
     pcode: '',
+    domain: '',
 
     whatapAnalytics: function () {
       var data = {};
@@ -4478,11 +4479,13 @@ BOOMR_check_doc_domain();
 
       // by config
       if (impl.pcode) {
-        data = { pcode: impl.pcode };
+        data.pcode = impl.pcode;
       }
 
+      data.domain = impl.domain || location.hostname;
+
       // by QUERY_PARAMS
-      const QUERY_PARAMS = ['pcode'];
+      const QUERY_PARAMS = ['pcode', 'domain'];
       for (i = 0; i < QUERY_PARAMS.length; i++) {
         param = QUERY_PARAMS[i];
         value = BOOMR.utils.getQueryParamValue(param);
